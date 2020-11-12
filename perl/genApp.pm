@@ -60,7 +60,7 @@ sub sourceJavaFiles      {map{fpe(sourceJava, @$_, q(java))}                    
   [qw(photoBytes           PhotoBytes          )],
   [qw(photoBytes           PhotoBytesJP        )],
   [qw(photoBytes           PhotoBytesJpx       )],
-  [qw(prompts              Prompts             )],
+# [qw(prompts              Prompts             )],
   [qw(randomChoice         RandomChoice        )],
   [qw(rightWrongTracker    RightWrongTracker   )],
   [qw(save                 Save                )],
