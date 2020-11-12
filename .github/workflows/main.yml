@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Env
+      run: |
+        echo $HOME
+        pwd
+
+    - name: Install Sdk
+      run: |
+       mkdir -p android/sdk
+        (cd  android/sdk; wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip; unzip -q sdk-tools-linux-3859397.zip)
+         echo 'y' | android/sdk/tools/bin/sdkmanager 'platforms;android-25' 'platform-tools' 'build-tools;25.0.3' emulator 'system-images;android-25;google_apis;x86_64'
+
+    - name: Install Java
+      run: |
+       sudo apt update
+       sudo apt install imagemagick zip openjdk-8-jdk tree curl zip
+
+    - name: Create keystore
+      run: |
+       mkdir keys
+       keytool -genkey -v -keystore keys/key.keystore -keyalg RSA -keysize 2048 -validity 10000 -storepass 121212 -alias key -dname 'CN=a, OU=a, O=a, L=a, ST=a, C=a'
+
+    - name: Install Perl
+      run: |
+        sudo cpan -T install Data::Table::Text
+        sudo cpan -T install Android::Build
+        sudo cpan -T install GitHub::Crud
+
+    - name: Check Perl
+      run: |
+        perl -v
+
+    - name: Tree
+      run: |
+        tree
+
+    - name: pwd
+      run: |
+        pwd
+
+    - name: GenApp
+      run: |
+        perl perl/genApp.pm
+
+    - name: Tree2
+      run: |
+        tree
