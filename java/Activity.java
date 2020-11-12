@@ -35,7 +35,7 @@ import com.appaapps.Fourier;
 import com.appaapps.Midi;
 import com.appaapps.MidiTracks;
 import com.appaapps.PhotoBytes;
-import com.appaapps.Prompts;
+//import com.appaapps.Prompts;
 import com.appaapps.Save;
 import com.appaapps.Sha256;
 import com.appaapps.Speech;
@@ -368,7 +368,7 @@ public class Activity extends android.app.Activity                              
       if (testWindow() && appState != null && appState.screenShotMode())        // Allow screen shots if in test window and the app requested screenshots
        {s.setCompassRoseCmd("shot", 4, new Runnable()                           // Screen shot
          {public void run()
-           {display.takeScreenShot();
+           {//display.takeScreenShot();
            }
          });
        }
@@ -673,17 +673,17 @@ public class Activity extends android.app.Activity                              
       return ""+System.currentTimeMillis();
      }
 
-    void takeScreenShot()                                                       //M Take a screen shot and upload it to Git hub
-     {final Svg   svg  = svgResponse != null ? svgResponse : svgQuestion;       // Svg to screen shot
-      final Point size = this.size;                                             // Size of screen shot  to match last canvas
-      final String saveTo = userid+"/"+appName;
-
-      if (svg != null && size != null)
-       {Activity.this.takeScreenShot
-         (svg, userid, appName, screenShotName(), "",
-          size.x/2, size.y/2);
-       }
-     }
+//  void takeScreenShot()                                                       //M Take a screen shot and upload it to Git hub
+//   {final Svg   svg  = svgResponse != null ? svgResponse : svgQuestion;       // Svg to screen shot
+//    final Point size = this.size;                                             // Size of screen shot  to match last canvas
+//    final String saveTo = userid+"/"+appName;
+//
+//    if (svg != null && size != null)
+//     {Activity.this.takeScreenShot
+//       (svg, userid, appName, screenShotName(), "",
+//        size.x/2, size.y/2);
+//     }
+//   }
 
     public void autoPlayerPress                                                 //M Let the auto player make the press/release
      (final float x,                                                            //P X coordinate to press
@@ -746,49 +746,49 @@ public class Activity extends android.app.Activity                              
      } // ShowPress
    } //C Display
 
-  void takeScreenShot                                                           //M Take a screen shot and upload it to Git hub
-   (final Svg    svg,                                                           //P Svg to draw
-    final String userid,                                                        //P Userid of repository to write to
-    final String repo,                                                          //P Name of repository to write to
-    final String name,                                                          //P Short name of file to contain screen shot in repository on GitHub
-    final String addPath,                                                       //P Additional path on Github
-    final int    sizeX,                                                         //P Size in X of screen shot
-    final int    sizeY                                                          //P Size in Y of screen shot
-   )
-   {final String
-      shot = "screenShot/"+                                                     // Path to screen shot on GitHub
-       (appPath.equals("") ? "" : appPath+"/")+                                 // App Path already has a / on the end
-       (addPath.equals("") ? "" : addPath+"/")+
-       name+".jpg";
-
-    say("Take screen shot: userid=", userid, " repo=", repo, " name=", name,
-        " addPath=", addPath, " sizeX=",   sizeX,   " sizeY=", sizeY,
-        " shot=", shot);
-
-    final Thread screenShotUpload = new GitHubUploadStream                      // Screen shot upload to GitHub thread
-     (userid,                                                                   // Userid on GitHub
-      repo,                                                                     // Name of repository on GitHub minus userid
-      shot)                                                                     // File in out/ folder
-     {protected void upload(OutputStream stream)                                // Upload to the specified stream
-       {final Bitmap b = Bitmap.createBitmap(sizeX, sizeY,                      // Bitmap to draw into
-                         Bitmap.Config.ARGB_8888);
-        final Canvas c = new Canvas(b);                                         // Canvas
-        c.drawColor(0);                                                         // Set background
-        svg.draw(c);
-        try                                                                     // Compress bitmap to jpg - try required if we create a file as the target of the stream
-         {b.compress(CompressFormat.JPEG, 95, stream);                          // Compress to stream
-         }
-        catch (Exception e)                                                     // Compress failed
-         {say(e);
-          e.printStackTrace();
-         }
-       }
-      protected void finished(Integer code, String result)
-       {say(code, name);
-       }
-     };
-    screenShotUpload.run();                                                     // Use run() as we are already on the thread from octoline
-   }
+//  void takeScreenShot                                                           //M Take a screen shot and upload it to Git hub
+//   (final Svg    svg,                                                           //P Svg to draw
+//    final String userid,                                                        //P Userid of repository to write to
+//    final String repo,                                                          //P Name of repository to write to
+//    final String name,                                                          //P Short name of file to contain screen shot in repository on GitHub
+//    final String addPath,                                                       //P Additional path on Github
+//    final int    sizeX,                                                         //P Size in X of screen shot
+//    final int    sizeY                                                          //P Size in Y of screen shot
+//   )
+//   {final String
+//      shot = "screenShot/"+                                                     // Path to screen shot on GitHub
+//       (appPath.equals("") ? "" : appPath+"/")+                                 // App Path already has a / on the end
+//       (addPath.equals("") ? "" : addPath+"/")+
+//       name+".jpg";
+//
+//    say("Take screen shot: userid=", userid, " repo=", repo, " name=", name,
+//        " addPath=", addPath, " sizeX=",   sizeX,   " sizeY=", sizeY,
+//        " shot=", shot);
+//
+//    final Thread screenShotUpload = new GitHubUploadStream                      // Screen shot upload to GitHub thread
+//     (userid,                                                                   // Userid on GitHub
+//      repo,                                                                     // Name of repository on GitHub minus userid
+//      shot)                                                                     // File in out/ folder
+//     {protected void upload(OutputStream stream)                                // Upload to the specified stream
+//       {final Bitmap b = Bitmap.createBitmap(sizeX, sizeY,                      // Bitmap to draw into
+//                         Bitmap.Config.ARGB_8888);
+//        final Canvas c = new Canvas(b);                                         // Canvas
+//        c.drawColor(0);                                                         // Set background
+//        svg.draw(c);
+//        try                                                                     // Compress bitmap to jpg - try required if we create a file as the target of the stream
+//         {b.compress(CompressFormat.JPEG, 95, stream);                          // Compress to stream
+//         }
+//        catch (Exception e)                                                     // Compress failed
+//         {say(e);
+//          e.printStackTrace();
+//         }
+//       }
+//      protected void finished(Integer code, String result)
+//       {say(code, name);
+//       }
+//     };
+//    screenShotUpload.run();                                                     // Use run() as we are already on the thread from octoline
+//   }
 //------------------------------------------------------------- ----------------
 // Utilities
 //------------------------------------------------------------------------------
@@ -934,31 +934,31 @@ public class Activity extends android.app.Activity                              
    {startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
    }
 
-  private void uploadStateToGitHub()                                            //M Upload state to GitHub
-   {final String
-      shot = "state/"+System.currentTimeMillis()+".html";                       // File name to receive state
-    final Thread upload = new GitHubUploadStream                                // Thread to upload to GitHub
-     (userid,                                                                   // Repo on GitHub
-      appName,                                                                  // Userid on GitHub
-      shot)                                                                     // File in out/ folder
-     {final AppState a = appState;
-       protected void upload(OutputStream stream)                               // Upload to the specified stream
-       {if (a != null)
-         {final String s = a.printState()+printContext();
-          try
-           {stream.write(s.getBytes("UTF-8"));
-           }
-          catch(Exception e)                                                    // File creation errors
-           {say(e); e.printStackTrace();
-           }
-         }
-       }
-      protected void finished(Integer code, String result)
-       {say(code);
-       }
-     };
-    upload.run();                                                               // Use run() as we are already on the thread from octoline
-   }
+//private void uploadStateToGitHub()                                            //M Upload state to GitHub
+// {final String
+//    shot = "state/"+System.currentTimeMillis()+".html";                       // File name to receive state
+//  final Thread upload = new GitHubUploadStream                                // Thread to upload to GitHub
+//   (userid,                                                                   // Repo on GitHub
+//    appName,                                                                  // Userid on GitHub
+//    shot)                                                                     // File in out/ folder
+//   {final AppState a = appState;
+//     protected void upload(OutputStream stream)                               // Upload to the specified stream
+//     {if (a != null)
+//       {final String s = a.printState()+printContext();
+//        try
+//         {stream.write(s.getBytes("UTF-8"));
+//         }
+//        catch(Exception e)                                                    // File creation errors
+//         {say(e); e.printStackTrace();
+//         }
+//       }
+//     }
+//    protected void finished(Integer code, String result)
+//     {say(code);
+//     }
+//   };
+//  upload.run();                                                               // Use run() as we are already on the thread from octoline
+// }
 
   private static String printContext()                                          //M Context information
    {return
@@ -1019,12 +1019,12 @@ public class Activity extends android.app.Activity                              
 
   private static double prompt                                                  //M Prompt the student and return the length of the prompt in seconds
    (String prompt)                                                              //P Text of prompt in English
-   {final byte[]audio = Prompts.choose(prompt);                                 // Choose an audio track
-    if (audio != null && playing)                                               // Play speech if app is in the foreground
-     {final double duration = Speech.playTime(audio);                           // Duration in seconds
-      Speech.playSound(audio);                                                  // Play the audio track
-      return duration;                                                          // Return the duration of the track
-     }
+   {//final byte[]audio = Prompts.choose(prompt);                                 // Choose an audio track
+    //if (audio != null && playing)                                               // Play speech if app is in the foreground
+    // {final double duration = Speech.playTime(audio);                           // Duration in seconds
+    //  Speech.playSound(audio);                                                  // Play the audio track
+    //  return duration;                                                          // Return the duration of the track
+    // }
     return 0;                                                                   // No sound played
    }
 
@@ -1062,8 +1062,9 @@ public class Activity extends android.app.Activity                              
   private static String translate                                               //M Translate strings
    (String source)                                                              //P String to be translated
    {final String l = locale();
-    if (l.equalsIgnoreCase("en")) return source;
-    return Translations.translate(locale(), source);                            // Translate in the current locale
+    return source;
+    //if (l.equalsIgnoreCase("en")) return source;
+    //return Translations.translate(locale(), source);                            // Translate in the current locale
    }
 
   private static void loadSet                                                   //M Load a set from a string of values
