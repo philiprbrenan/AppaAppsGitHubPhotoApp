@@ -175,12 +175,16 @@ public class AppDescription                                                     
      }
    } // Photo
 
+  public String toString()                                                      //M String representation of class
+   {return app.toString();
+   }
+
 // Testing
 
   public static void main(String[] args)                                        //m Test
    {AppDescription d = new AppDescription();                                    // Create app description
 
-    AppDescription.App a = d.app = d.new App();
+    AppDescription.App a = d.new App();
     a.name  = "test";
     a.title = "test app";
 
@@ -198,7 +202,7 @@ public class AppDescription                                                     
     q = d.new PhotoFact(p2, f1);
 //  say("AAAA ", a.toString());
 
-    assert a.toString().contains("name=test");
+    assert d.toString().contains("name=test");
     say("Hello World\n");
    }
 
