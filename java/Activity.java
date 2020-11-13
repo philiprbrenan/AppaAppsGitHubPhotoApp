@@ -29,9 +29,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.appaapps.AppState;
+import com.appaapps.Assets;
 import com.appaapps.Congratulations;
 import com.appaapps.Email;
 import com.appaapps.Fourier;
+import com.appaapps.LoadAppDescription;
 import com.appaapps.Midi;
 import com.appaapps.MidiTracks;
 import com.appaapps.PhotoBytes;
@@ -56,9 +58,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Activity extends android.app.Activity                              // The activity thrust upon the user
- {final static private String  sourceVersion  = "20201111";                     // Source code version
-  final static private boolean showLoopTime = false;                            // Log the loop time if true
-  final static public  long    storageLimit = 1024*1024*1024;                   // Limit the amount of space occupied by downloaded zip files
+ {final static private String  sourceVersion = "20201111";                      // Source code version
+  final static private boolean showLoopTime  = false;                           // Log the loop time if true
+  final static public  long    storageLimit  = 1024*1024*1024;                  // Limit the amount of space occupied by downloaded zip files
   final static public  double
     autoPlayWait           = 30,                                                // Start auto play of the student does not respond in this many seconds
     autoPlayerPeriod       = 4,                                                 // Time animation started, period in seconds
@@ -139,8 +141,16 @@ public class Activity extends android.app.Activity                              
     Save.setSaveDir  (getSaveDir());                                            // Global saver
     Speech.setSaveDir(getSaveDir());                                            // Global speech player
     Midi.setSaveDir  (getSaveDir());                                            // Global midi   player
+
+    display = new Display();                                                    // Create a new display for this session so that we the GPU state is reset
+    setContentView(display);                                                    // Set the display
+    final Thread t = new Thread(display.runnable);                              // Create the drawing thread
+    t.start();                                                                  // Start the drawing thread
+    t.setPriority(Thread.MAX_PRIORITY);                                         // Draw as quickly as possible
+    playing = true;                                                             // The app is playing
+    Assets.load(Activity.this);                                                 // Load asset file names
+    Assets.print();
     //createLogo();
-    newQuestion();                                                              // Play the app
    }
 
 //  private void createLogo()                                                     //M Create the logo display
@@ -161,14 +171,10 @@ public class Activity extends android.app.Activity                              
     restoreActivityState();                                                     // Restore state of Activity
     if (appState != null) appState.restore();                                   // Restore state of Appstate
     numberOfSessions++;                                                         // Increment number of sessions after install
-    display = new Display();                                                    // Create a new display for this session so that we the GPU state is reset
-    setContentView(display);                                                    // Set the display
-    Fourier.speedMultiplier(totalTime() / warmUpSecs);                          // Bring the Fourier patterns up to speed through the warm up period
-    if (lastDrawnSvg != null) lastDrawnSvg.onShow();                            // Restart the last Svg
-    final Thread t = new Thread(display.runnable);                              // Create the drawing thread
-    t.start();                                                                  // Start the drawing thread
-    t.setPriority(Thread.MAX_PRIORITY);                                         // Draw as quickly as possible
-    playing = true;                                                             // The app is playing
+//    Fourier.speedMultiplier(totalTime() / warmUpSecs);                        // Bring the Fourier patterns up to speed through the warm up period
+//    if (lastDrawnSvg != null) lastDrawnSvg.onShow();                          // Restart the last Svg
+say("FFFF OnResume");
+//    newQuestion();
    }
 
   public double sessionTime()                                                   // Amount of time spent playing this app in this session
@@ -181,13 +187,13 @@ public class Activity extends android.app.Activity                              
 
   public void onPause()                                                         // Pause
    {super.onPause();
-    totalPlayTime = totalTime();                                                // Total play time before save in seconds
-    saveActivityState();                                                        // Save state of Activity
-    if (appState != null) appState.save();                                      // Save state of Appstate
-    Speech.stop();                                                              // Stop sounds - speech
-    Midi  .stop();                                                              // Stop sounds - midi
-    if (display != null) display.stop = true;                                   // Stop drawing
-    playing = false;                                                            // The app is no longer playing
+//    totalPlayTime = totalTime();                                                // Total play time before save in seconds
+//    saveActivityState();                                                        // Save state of Activity
+//    if (appState != null) appState.save();                                      // Save state of Appstate
+//    Speech.stop();                                                              // Stop sounds - speech
+//    Midi  .stop();                                                              // Stop sounds - midi
+//    if (display != null) display.stop = true;                                   // Stop drawing
+//    playing = false;                                                            // The app is no longer playing
 //  svgQuestion = svgResponse = null;                                           // Do not do this as it leaves the app hanging on the logo.
 //  lastQuestion = null; lastResponse = null;
    }
@@ -247,21 +253,23 @@ public class Activity extends android.app.Activity                              
        }
      }
    }
+
 //------------------------------------------------------------- ----------------
 // Play app
 //------------------------------------------------------------------------------
 
   public void newQuestion()                                                     // Show the next question
-   {lastQuestion = appState.new Question();                                     // The latest question
-    Point Size = display.size;                                                  // Current display size
-    while(Size == null)                                                         // Wait until we know the size of the drawing area
-     {SystemClock.sleep(waitForDisplay);
-      Size = display.size;
+   {say("AAAA 1111");
+      if (appState == null)
+     {appState = new AppState(new LoadAppDescription().load());
      }
+    lastQuestion = appState.new Question();                                     // The latest question
+say("AAAA 2222");
 
     Fourier.speedMultiplier(totalTime() / warmUpSecs);                          // Bring the Fourier patterns up to speed through the warm up period
 
-    final Point size = Size;                                                    // Finalize the size
+    final Point size = display.size;                                            // Finalize the size
+say("AAAA 3333"+size);
     final Svg S      = svgQuestion = lastQuestion.svg(size.x, size.y);          // Show question choices
     svgResponse      = null;                                                    // No response now we have a question to show
     lastResponse     = null;                                                    // No response now we have a question to show
@@ -561,8 +569,21 @@ public class Activity extends android.app.Activity                              
      {startDrawing();
      }
 
-    public void surfaceCreated  (SurfaceHolder holder)
+    public void surfaceCreated(SurfaceHolder holder)                            // Amazingly the caller must reliniquish the main thread to allwo the main thread to create the surface.
      {startDrawing();
+say("DDDDD created");
+      new Runnable()
+       {public void run()
+         {say("DDDDD 1111");
+          while(display.size == null) SystemClock.sleep(waitForDisplay);        // Wait until we know the size of the drawing area
+          say("DDDDD 2222");
+          runOnUiThread(new Runnable()
+           {public void run()
+             {newQuestion();
+             }
+           });
+         }
+       }.run();
      }
 
     public void surfaceDestroyed(SurfaceHolder holder)
@@ -632,24 +653,13 @@ public class Activity extends android.app.Activity                              
          {if (canvas == null) {size = null; return;}                            // Record the last size of the canvas
           if (size == null) size = new Point();
           size.set(canvas.getWidth(), canvas.getHeight());                      // Show size of screen
-          if (chooseFlag != null)                                               // Show a choice - Sub choices - such as flags
-           {lastDrawnSvg = chooseFlag.draw(canvas);
-           }
-          else if (response != null)
+          if (response != null)
            {lastDrawnSvg = response.draw(canvas);                               // Draw response
            }
           else if (question != null)
            {lastDrawnSvg = question.draw(canvas);                               // Draw question
            }
-          else
-           {lastDrawnSvg = svgLogo;                                             // Do not process motion events during start up
-            svgLogo.draw(canvas);                                               // Display logo while we wait for app to be created
-           }
-          if (displayLog ||                                                     // Display the log if requested or we are the super user
-              userid.equalsIgnoreCase("philiprbrenan")     ||
-              userid.equalsIgnoreCase("coreliuOrg")        ||
-              userid.equalsIgnoreCase("thestableworkshop") ||
-              false)
+          if (displayLog)                                                       // Display the log if requestedor we are the super user
            {com.appaapps.Log.showLog(canvas, paint);
            }
           if (showPress != null) showPress.drawPress(canvas);                   // Display the auto player press if there is one
