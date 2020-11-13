@@ -35,7 +35,7 @@ public class AppState                                                           
  {final AppDescription unpacked;                                                // The App Description Language Commands describing this app
   final Random random = new Random();                                           // Random numbers
   final Stack<PhotoFact> raceCourse          = new Stack<PhotoFact>();          // The possibilities to be tested in a race after possibly being rearranged
-  final Stack<Speaker>  speakers             = new Stack<Speaker>  ();          // Speakers available
+//final Stack<Speaker>  speakers             = new Stack<Speaker>  ();          // Speakers available
   public final Stack<Photo>    photos        = new Stack<Photo>    ();          // Photos available
   public final Stack<Fact>     facts         = new Stack<Fact>     ();          // Facts available
   public final Stack<PhotoFact>photoFacts    = new Stack<PhotoFact>();          // Facts per photo available
@@ -129,7 +129,7 @@ public class AppState                                                           
   final public RightWrongTracker.SwingLimits swingLimits;                       // Swing limit on each photo/fact
 
   public AppState                                                               //c Create the app state from the details unpacked from the zip file - the real work is done by run() when we start this thread
-   (AppDescription unpacked)                                              //O Unpacked app description
+   (AppDescription unpacked)                                                    //O Unpacked app description
    {this.unpacked = unpacked;
     orderedApp    = appOrderFromString                                          // App order
      (unpacked.app.ordered, AppOrder.Never);
@@ -137,22 +137,22 @@ public class AppState                                                           
     menuMode      = Svg.menuModeFromString                                      // Menu mode to be used by this app
      (unpacked.app.menu, Svg.MenuMode.Rose);
 
-    appName              = unpacked.app.name;                            // App name
-    appTitle             = unpacked.app.title;                           // App title
-    appAuthor            = unpacked.app.author;                          // App author
-    email                = unpacked.app.email;                           // Email address for app
-    help                 = unpacked.app.help;                            // Url of web page with help/about for this app
-    language             = unpacked.app.language;                        // Language this app is spoken in
-    prerequisites        = unpacked.app.prerequisites;                   // Prerequisite apps for this app
-    enables              = unpacked.app.enables;                         // Apps this app enables
-    screenShotsRequested = unpacked.app.screenShots != null;             // Screen shots requested via the app.screenshots= keyword
-    saveScreenShotsTo    = unpacked.app.saveScreenShotsTo;               // Alternate userid/repository for screen shots to be saved to
-    version              = unpacked.app.version;                         // Version of the app - from the point of view of the author, not the software developer
-    numberOfPhotosInApp  = unpacked.photos.size();                              // Number of photos in app.
+    appName              = unpacked.app.name;                                   // App name
+    appTitle             = unpacked.app.title;                                  // App title
+    appAuthor            = unpacked.app.author;                                 // App author
+    email                = unpacked.app.email;                                  // Email address for app
+    help                 = unpacked.app.help;                                   // Url of web page with help/about for this app
+    language             = unpacked.app.language;                               // Language this app is spoken in
+    prerequisites        = unpacked.app.prerequisites;                          // Prerequisite apps for this app
+    enables              = unpacked.app.enables;                                // Apps this app enables
+    screenShotsRequested = unpacked.app.screenShots != null;                    // Screen shots requested via the app.screenshots= keyword
+    saveScreenShotsTo    = unpacked.app.saveScreenShotsTo;                      // Alternate userid/repository for screen shots to be saved to
+    version              = unpacked.app.version;                                // Version of the app - from the point of view of the author, not the software developer
+    numberOfPhotosInApp  = unpacked.photos.size();                                     // Number of photos in app.
     maximumRaceSize      = unpacked.app.maximumRaceSize;
-    speakerMode          = unpacked.app.speaker != null;                 // Speaker mode if this string is set
+    speakerMode          = unpacked.app.speaker != null;                        // Speaker mode if this string is set
 
-    musicUrl             = unpacked.app.musicUrl;                        // Music url
+    musicUrl             = unpacked.app.musicUrl;                               // Music url
 
     musicPlay            = appOrderFromString                                   // App music play order
      (unpacked.app.musicPlay, AppOrder.Always);
@@ -484,43 +484,17 @@ public class AppState                                                           
    } //C Speaker
 
   public class ShowAndTell                                                      //C Speech and title for a fact or a photo
-   {final public TreeMap<String, String> soundBytes;                            // Sounds for this item indexed by speaker name
-    final public String name, title;                                            // Name and title of the piece
+   {final public String name, title;                                            // Name and title of the piece
     public ShowAndTell                                                          //c Create a new Show and Tell
-     (TreeMap<String, String> soundBytes,                                       //P Speech by speaker name
-      String type,                                                              //P Type of thing being tracked
+     (String type,                                                              //P Type of thing being tracked
       String name,                                                              //P Name of the photo or fact
       String title)                                                             //P Title of the photo or fact
-     {this.soundBytes = soundBytes;
-      this.name       = name;
-      this.title      = title;
+     {this.name  = name;
+      this.title = title;
      }
 
-    public String createMediaDataSource                                         //M Create a ready to play media player to tell the fact or the title of the photo as spoken by a specified speaker
-     (Speaker speaker,                                                          //P Speaker
-      String  variant)                                                          //P Speech variant
-     {final String Sounds = "sounds/";                                          // Key under which we will find sounds if any
-      final Stack<String> sounds = new Stack<String>();
-      for(String s: soundBytes.subMap                                           // Each possible sound for this photo or fact
-         (Sounds+Character.MIN_VALUE,
-          Sounds+Character.MAX_VALUE
-         ).keySet())
-       {sounds.push(s);
-       }
-
-      if (sounds.size() > 0)                                                    // Sounds present for this photo or fact
-       {final String sound = new RandomChoice<String>().chooseFromStack(sounds);// Choose a sound
-        final String s = soundBytes.get(sound);                                 // Bytes
-        return s;
-       }
-      else                                                                      // Use generated speech
-       {final String s = soundBytes.get(speaker.name+variant);                  // Bytes
-        if (s == null)                                                          // Complain if speech missing
-         {say("No speech: ", speaker.name, "+", variant, " for ", title);
-          return "";
-         }
-        return s;
-       }
+    public String createMediaDataSource()                                       //M Sound file associated with this fact
+     {return name;
      }
    } //C ShowAndTell
 
@@ -528,59 +502,15 @@ public class AppState                                                           
     extends ShowAndTell                                                         //E Every photo has a title and a set of speakers who can say its title
    {final public Stack<PhotoFact> facts = new Stack<PhotoFact>();               // The photo facts describing facts associated with this photo
     public PhotoFact photoFact = null;                                          // The photo fact describingthe title of this photo
-//  final public int level;                                                     // The level associated with this photo
     public PhotoBytes bitmap;                                                   // Compressed bitmap of photo
-    public Path aFewCharsPath;                                                  // Path of text specified by afewchars for this photo
-    final public Float aspectRatioPhoto, aspectRatioAFewChars;                  // Aspect ratio of photo, afewchars
     final public AppDescription.Photo photoCmd;                                 // The command containing the parse of the information supplied  by the user for this photo
-    final public Stack<PointF> pointsOfInterest = new Stack<PointF>();          // The points of interest in the photo
 
     Photo                                                                       //c Describe a photo
-     (final AppDescription.Photo photoCmd)                             //P Photo details from unpacked zip file
-     {super(photoCmd.soundBytes, "photo", photoCmd.name, photoCmd.title);
+     (final AppDescription.Photo photoCmd)                                      //P Photo details from unpacked zip file
+     {super("photo", photoCmd.name, photoCmd.title);
       this.photoCmd = photoCmd;
-//    this.level    = photoCmd.level != null ? photoCmd.level : 0;              // The level associated with this photo or the default if not
-
-      if (photoCmd.url != null)                                                 // Bitmap present via url keyword
-       {bitmap = photoCmd.photoBytes;                                           // Save compressed bitmap
-        if (bitmap == null) say("No photoBytes available for: ", name);
-        aspectRatioPhoto = ((float)photoCmd.height) / photoCmd.width;           // Aspect ratio for photo y/x
-       }
-      else                                                                      // This should not happen
-       {bitmap = null; aspectRatioPhoto = null;
-       }
-
-      if (photoCmd.aFewChars != null)                                           // AFewChars present
-       {final Paint paint = new Paint();
-        paint.setTextSize(444);                                                 // A broad range of numbers from 32 to 500 are probably acceptable, the height determines the accuracy with which the text is drawn
-        final String s = photoCmd.aFewChars;                                    // Text of a few chars
-        aFewCharsPath  = new Path();                                            // Path for text
-        paint.getTextPath(s, 0, s.length(), 0, 0, aFewCharsPath);               // Path of text
-        final RectF bounds = new RectF();                                       // Bounds of text path
-        aFewCharsPath.computeBounds(bounds, true);                              // Get bounds of path
-        aspectRatioAFewChars = bounds.height() / bounds.width();                // Aspect ratio of path
-       }
-      else                                                                      // This should not happen
-       {aFewCharsPath = null; aspectRatioAFewChars = null;
-       }
-
-      if (photoCmd.pointsOfInterest != null)                                    // Points of interest
-       {final String[]s = photoCmd.pointsOfInterest.                            // Parse points of interest
-           replaceAll("\\D+", " ").split("\\s+");
-        final int D = 50, N = s.length;                                         // Default value, number of coordinates
-        final float P = 100f;                                                   // Percentage
-        for(int i = 0; i < N - 1; i += 2)                                       // Form coordinates into pairs
-         {final PointF p = new PointF
-           (convertStringToInteger(s[i]  , D) / P,
-            convertStringToInteger(s[i+1], D) / P);
-          pointsOfInterest.push(p);
-         }
-        if (N % 2 == 1)                                                         // Trailing x coordinate - assume 50% for y
-         {pointsOfInterest.push
-           (new PointF(convertStringToInteger(s[N-1], D) / P, D / P));
-         }
-       }
      }
+
     public Fact findSimilarFact                                                 //M Chose a fact for this photo which matches the aspect of the specified fact if possible
      (final Fact fact)                                                          //P Fact for which we want a similar fact with a matching aspect
      {final Stack<Fact> matchingFacts = new Stack<Fact>();                      // Facts that match on aspect
@@ -603,8 +533,7 @@ public class AppState                                                           
      }
 
     public float aspectRatio()                                                  //M Aspect ratio for a photo
-     {return aspectRatioPhoto     != null ? aspectRatioPhoto     :
-             aspectRatioAFewChars != null ? aspectRatioAFewChars : 1;
+     {return photoCmd.height / photoCmd.width;
      }
 
 //  public boolean levelOk()                                                    //M Check that this photo is currently active at the current level of play
@@ -627,7 +556,7 @@ public class AppState                                                           
 
     Fact                                                                        //c Describe a fact
      (AppDescription.Fact f)                                           //P Unpacked fact description from zip file
-     {super(f.soundBytes, "fact", f.name, f.title);
+     {super("fact", f.name, f.title);
       factCmd = f;
       if (f.aspect != null)                                                     //Aspects: split out each word in aspects and index
        {for(String a: f.aspect.split("\\s+")) aspects.add(a);
@@ -887,9 +816,9 @@ public class AppState                                                           
     extends Displayed                                                           //E A question displays some choices to the student
    {public final PhotoFact
       currentQuestion;                                                         // The photo fact to pose to the user unless we are using the photo title
-    public final Speaker
-      speaker1,                                                                 // Speaker 1 asks the question
-      speaker2;                                                                 // Speaker 2 responds to wrong answers
+//    public final Speaker
+//      speaker1,                                                                 // Speaker 1 asks the question
+//      speaker2;                                                                 // Speaker 2 responds to wrong answers
     public final Stack<Photo>
       choices = new Stack<Photo>();                                             // The answer photo first, followed by photos that have a higher swing and that do not have the same fact are used to provide the user with better known choices from which to choose
     public final int
@@ -921,7 +850,7 @@ public class AppState                                                           
         chooseNextQuestion();                                                   // Choose from the least understood questions
 
       if (currentQuestion  == null)                                             // Null when we are going to do something other than ask a question - for instance offer congratulations instead
-       {speaker1 = speaker2 = null;
+       {//speaker1 = speaker2 = null;
         return;
        }
 
@@ -935,11 +864,11 @@ public class AppState                                                           
        {Midi.stop();
        }
 
-      if (true)                                                                 // Select speakers
-       {final Stack<Speaker> t = new RandomChoice<Speaker>().choose2(speakers);
-        speaker1 = t.elementAt(0);
-        speaker2 = t.elementAt(1);
-       }
+//    if (true)                                                                 // Select speakers
+//     {final Stack<Speaker> t = new RandomChoice<Speaker>().choose2(speakers);
+//      speaker1 = t.elementAt(0);
+//      speaker2 = t.elementAt(1);
+//     }
 
       currentQuestion.incPresented();                                           // The photoFact has been presented
       photoFactFilter.add(currentQuestion);                                     // Add chosen photoFact to filter
@@ -975,8 +904,9 @@ public class AppState                                                           
      {final ShowAndTell s = currentQuestion.fact != null ?                      // Wrong/right response - correct answer
         currentQuestion.fact :
         currentQuestion.photo;
-      return s.createMediaDataSource(speaker1,
-        emphasized ? speechEmphasis : speechNormal);
+//    return s.createMediaDataSource(speaker1,
+//      emphasized ? speechEmphasis : speechNormal);
+      return s.createMediaDataSource();
      }
 
     PhotoFact chooseNextQuestion()                                              //M Choose from the least understood questions
@@ -1189,10 +1119,7 @@ public class AppState                                                           
 
       for(int i = 0; i < nChoices; ++i)                                         // Load aspect ratios
        {final Photo p = choices.elementAt(i);
-        final float a = p.aspectRatioPhoto != null ?
-                        p.aspectRatioPhoto         :
-                        p.aspectRatioAFewChars;
-        aspectRatios[i] = a;
+        aspectRatios[i] = p.aspectRatio();
        }
 
       final int nImages = speakerMode ? numberOfImagesToShow :                  // Show all the images in speaker mode
@@ -1247,6 +1174,7 @@ public class AppState                                                           
            {final float cx = i * fx, cy = j * fy;                               // Corner position
             if (speakerMode && p >= choices.size()) break;
             final Photo photo = show.elementAt(p++);                            // Photo
+say("SSSSSSSS 2222 "+photo.bitmap);
             if (photo.bitmap != null)
              {displayed.push                                                    // Record the Svg elements being used to display this photo as a question
                (new Tile(photo,
@@ -1259,7 +1187,7 @@ public class AppState                                                           
               if (speakerMode)                                                  // In speaker mode just say the item when it is touched
                {e.tapAction(new Runnable()
                  {public void run()
-                   {final String s = photo.createMediaDataSource(speaker1, speechNormal);
+                   {final String s = photo.createMediaDataSource();
                     Speech.playSound(s);
                    }
                  });
@@ -1363,26 +1291,22 @@ public class AppState                                                           
           //wrongSounds.push
           // (wrongTitle.createMediaDataSource(speaker2, speechEmphasis));      // Set response for wrong part of wrong/right
 
-            wrongSounds.push                                                    // Say the title
-             (chosenPhoto.createMediaDataSource(speaker2, speechEmphasis));
+            wrongSounds.push(chosenPhoto.createMediaDataSource());              // Say the title
 
             if (wrongTitle != null && wrongTitle != chosenPhoto)                // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//wrongSounds.push(interPhraseGap);
-              wrongSounds.push
-               (wrongTitle.createMediaDataSource(speaker2, speechEmphasis));
+              wrongSounds.push(wrongTitle.createMediaDataSource());
              }
 
             rightTitle = currentQuestion.isFact() ?                             // Wrong/right response - correct answer
               currentQuestion.fact : currentQuestion.photo;
             //rightSounds.push(questionSound(true));                            // Play the question against the right answer so the user selects the right answer for the sound from only one choice. The sound is said emphasized. The right answer is displayed on the right or bottom.
 
-            rightSounds.push                                                    // Say the title
-             (currentQuestion.photo.createMediaDataSource(speaker1, speechEmphasis));
+            rightSounds.push(currentQuestion.photo.createMediaDataSource());    // Say the title
 
             if (rightTitle != null && rightTitle != currentQuestion.photo)      // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//rightSounds.push(interPhraseGap);
-              rightSounds.push
-               (rightTitle.createMediaDataSource(speaker1, speechEmphasis));
+              rightSounds.push(rightTitle.createMediaDataSource());
              }
 
             bgc = ColoursTransformed.darkRed;                                   // Dark Red background means wrong
@@ -1396,13 +1320,11 @@ public class AppState                                                           
           // (rightTitle.createMediaDataSource(speaker2, speechEmphasis));      // Say correct title or related fact from the wrongly chosen photo
 
           //rightSounds.push(interPhraseGap);
-            rightSounds.push                                                    // Say the title
-             (chosenPhoto.createMediaDataSource(speaker2, speechEmphasis));
+            rightSounds.push(chosenPhoto.createMediaDataSource());              // Say the title
 
             if (rightTitle != null && rightTitle != chosenPhoto)                // Say a fact that the stuent might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//rightSounds.push(interPhraseGap);
-              rightSounds.push
-               (rightTitle.createMediaDataSource(speaker2, speechEmphasis));
+              rightSounds.push(rightTitle.createMediaDataSource());
              }
 
             bgc = ColoursTransformed.grey;                                      // Grey means going wrong
@@ -1417,13 +1339,11 @@ public class AppState                                                           
 //        rightSounds.push(questionSound(false));                               // Play the question against the right answer so the user selects the right answer for the sound from only one choice
 
 //        rightSounds.push(interPhraseGap);
-          rightSounds.push                                                      // Say the title of the chosen photo
-           (chosenPhoto.createMediaDataSource(speaker1, speechNormal));
+          rightSounds.push(chosenPhoto.createMediaDataSource());                // Say the title of the chosen photo
 
           if (currentQuestion.fact != null)                                     // Say the fact again if there is a fact
            {//rightSounds.push(interPhraseGap);
-            rightSounds.push
-             (currentQuestion.fact.createMediaDataSource(speaker1,speechNormal));
+            rightSounds.push(currentQuestion.fact.createMediaDataSource());
            }
 
           bgc = ColoursTransformed.darkMagenta;                                 // Dark Magenta means right after wrong
@@ -1456,18 +1376,15 @@ public class AppState                                                           
 
           if (nextFactToPresent != null)                                        // Present new photoFact if possible
            {final ShowAndTell s = nextFactToPresent.showAndTell();
-            rightSounds.push(s.createMediaDataSource(speaker1, speechNormal));
+            rightSounds.push(s.createMediaDataSource());
             rightTitle = s;
            }
           else if (currentQuestion.fact != null)                                // Otherwise say the fact again if there was a fact
-           {rightSounds.push
-             (currentQuestion.fact.createMediaDataSource
-               (speaker2, speechNormal));
+           {rightSounds.push(currentQuestion.fact.createMediaDataSource());
             rightTitle = currentQuestion.fact;
            }
           else                                                                  // No facts available so say the title again
-           {rightSounds.push                                                    // Say the title of the chosen photo
-             (chosenPhoto.createMediaDataSource(speaker2, speechNormal));
+           {rightSounds.push(chosenPhoto.createMediaDataSource());              // Say the title of the chosen photo
             rightTitle = currentQuestion.showAndTell();                         // Show current question title if no new fact to present
            }
 
