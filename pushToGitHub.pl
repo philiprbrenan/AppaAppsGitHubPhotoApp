@@ -29,7 +29,7 @@ if (1)                                                                          
     searchDirectoryTreesForMatchingFiles($dir,
       qw(.java .txt .jpg .png .pl .pm .md));
 
-  my %files = map {$_=>1} #grep {m(genApp.pm)}                                  # Filter files
+  my %files = map {$_=>1} #grep {m(genApp.pm|Activity|Appstate)i}                # Filter files
     @files;
 
   for my $f(sort keys %files)                                                   # Upload each selected file
