@@ -17,7 +17,7 @@ lll "GenApp 3";
 sub home    {$ENV{HOME}}                                                        # Home folder
 sub develop {home =~ m(\A/home/phil\Z) ? 1 : 0}                                 # Developing
 sub homeDir {develop ? fpd(home, q(AppaAppsGitHubPhotoApp)) :                   # Working folder
-                       $ENV{GITHUB_GITHUB_WORKSPACE}};
+                       $ENV{GITHUB_WORKSPACE}};
 sub homeJava             {fpd(homeDir, q(java))}                                # Java files
 sub appActivity          {qq(Activity)}                                         # Name of Activity = $activity.java file containing onCreate() for this app
 sub appDebuggable        {0}                                                    # Add debugabble to app manifest if true
