@@ -27,9 +27,8 @@ public class MidiTracks                                                         
     final String folder)                                                        //P Folder in assets containing the midi tracks
    {try
      {if (context != null)                                                      // On Android
-       {String [] files = context.getAssets().list(folder);                     // Files in folder
-        for(String f: files)
-         {stack.push(f);
+       {for(String k: Assets.files)
+         {if (k.startsWith(folder)) stack.push(k);
          }
        }
       else                                                                      // On Ubuntu
@@ -50,10 +49,10 @@ public class MidiTracks                                                         
    }
 
   public static String chooseMusic()                                            //M Choose a music track at random
-   {return music+"/"+choose.chooseFromStack(midiMusic);                         // Choose midi music
+   {return choose.chooseFromStack(midiMusic);                                   // Choose midi music
    }
   public static String chooseRight()                                            //M Choose a right track at random
-   {return right+"/"+choose.chooseFromStack(midiRight);                         // Choose midi right
+   {return choose.chooseFromStack(midiRight);                                   // Choose midi right
    }
 
   public static void printMusic                                                 //M Print details of a music stack
