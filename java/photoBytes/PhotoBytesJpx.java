@@ -4,11 +4,18 @@
 //------------------------------------------------------------------------------
 package com.appaapps;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+
+import java.util.Stack;
 import java.util.TreeMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class PhotoBytesJpx extends PhotoBytes                                   //C Photo encoded as jpx
@@ -18,8 +25,8 @@ public class PhotoBytesJpx extends PhotoBytes                                   
   final public String name;                                                     // Name of photo as specified during construction
 
   public PhotoBytesJpx                                                          //c Constructor
-   (final TreeMap<String,byte[]> photoBytes,                                    //P Bytes describing the photo and the matching manifest
-    final String Key)                                                           //P Select the entries that start with this key
+   (final Stack<String> files,                                                  //P File names in assets
+    final String        Key)                                                    //P Select the entries that start with this key
    {final String key = Key + "/";                                               // Folder name
     final int N = key.length();
     int height = 0, width = 0, size = 0, X = 0, Y = 0;
@@ -27,13 +34,13 @@ public class PhotoBytesJpx extends PhotoBytes                                   
     byte[][][]a = null;                                                         // Tiles in image - unfinalized
 
     for(int pass = 0; pass < 2; ++pass)                                         // Arrange the tiles
-     {for(String k: photoBytes.keySet())                                        // Each entry in the zip file
-       {if (!k.startsWith(key)) continue;                                       // Entries for the specified image
+     {for(String k: files)                                                      // Each entry in assets
+       {if  (k.endsWith("/"))   continue;                                       // Directory
+        if (!k.startsWith(key)) continue;                                       // Entries for the specified image
         final String s = k.substring(N);                                        // File name minus folder
         if (s.startsWith("jpx.data"))                                           // Process manifest entries describing photo
          {try
-           {final String L =
-              new String(photoBytes.get(k), StandardCharsets.UTF_8);
+           {final String L = new String(load(k), StandardCharsets.UTF_8);
             for(final String l : L.split("\\n"))
              {final String[]w = l.split("\\s+");
               if      (w[0].equalsIgnoreCase("height")) height = s2i(w[1]);
@@ -54,10 +61,10 @@ public class PhotoBytesJpx extends PhotoBytes                                   
            {final int y = s2i(w[0]), x = s2i(w[1]);                             // Coordinates of tile
             if (x > X) X = x;
             if (y > Y) Y = y;
-            if (pass == 1) a[y-1][x-1] = photoBytes.get(k);                     // Bytes for tile
+            if (pass == 1) a[y-1][x-1] = load(k);                               // Bytes for tile
            }
           catch(Exception e)
-           {System.err.println(e);
+           {System.err.println("Unable to parse: "+s+"\n"+e);
             e.printStackTrace();
            }
          }
@@ -72,6 +79,53 @@ public class PhotoBytesJpx extends PhotoBytes                                   
     this.name   = key;                                                          // Finalize name of photo
     this.X      = X;                                                            // Number of tiles in X
     this.Y      = Y;                                                            // Number of tiles in Y
+   }
+
+  public byte[] loadAsset                                                       //M Load bytes from a file in assets
+   (String file)                                                                //P File name to load
+   {final int N = 1024;
+    ByteArrayOutputStream B = new ByteArrayOutputStream(N*N);
+    InputStream           i = null;
+    try
+     {i = Assets.context.getAssets().open(file);
+      byte    []b = new byte[N*N];
+      for(int j = 0; j < N; ++j)
+       {final int r = i.read(b);
+        if      (r == -1) {i.close(); break;}
+        else if (r >   0) B.write(b, 0, r);
+       }
+     }
+    catch (Exception e)
+     {say("Failed to read file: "+file);
+      e.printStackTrace();
+     }
+    return B.toByteArray();
+   }
+
+  public byte[] loadLocal                                                       //M Load bytes from a file on test computer
+   (String file)                                                                //P File name to load
+   {final int N = 1024;
+    ByteArrayOutputStream B = new ByteArrayOutputStream(N*N);
+    try
+     {InputStream i = new FileInputStream(file);
+      byte    []b = new byte[N*N];
+      for(int j = 0; j < N; ++j)
+       {final int r = i.read(b);
+        if      (r == -1) {i.close(); break;}
+        else if (r >   0) B.write(b, 0, r);
+       }
+     }
+    catch (Exception e)
+     {say("Failed to read file: "+file);
+      e.printStackTrace();
+     }
+    return B.toByteArray();
+   }
+
+  public byte[] load                                                            //M Load bytes from a file
+   (String file)                                                                //P File name to load
+   {if (file.startsWith("/home/phil/")) return loadLocal(file);
+    else                                return loadAsset(file);
    }
 
   public Draw prepare                                                           //O=com.appapps.PhotoBytes.prepare - prepare to draw the photo
@@ -129,37 +183,30 @@ public class PhotoBytesJpx extends PhotoBytes                                   
    }
 
   public static void main(String[] args)                                        //m Test
-   {final TreeMap<String,byte[]> p =                                            // Test jpx photo
-      new TreeMap<String,byte[]>();
-    final String manifest =
-"version 1  \n"+
-"type    jpx\n"+
-"size    256\n"+
-"source  xxx\n"+
-"width   640\n"+
-"height  480\n";
+   {Stack<String> files = fileList();
+    PhotoBytesJpx photo = new PhotoBytesJpx(files, "/home/phil/AppaAppsGitHubPhotoApp/build/assets/images/Autumn L");
+    assert  (""+photo).equals("{Source=>/home/phil/AppaAppsGitHubPhotoApp/images/Autumn, Size=>256, Height=>768, Width=>1024, X=>4, Y=>3}");
+    say("Hello World\n");
+   }
+
+  public static Stack<String> fileList()
+   {String dir = "/home/phil/AppaAppsGitHubPhotoApp/build/assets/";
+    Stack<String> files = new Stack<String>();                                  // Files found
+    Stack<File>   stack = new Stack<File>();                                    // Folders awaiting expansion
 
     try
-     {final byte[] b = manifest.getBytes(StandardCharsets.UTF_8);
-
-      p.put("/images/aaa/jpx.data", b);
-      p.put("/images/aaa/1_1.jpg", (byte[])null);
-      p.put("/images/aaa/1_2.jpg", (byte[])null);
-      p.put("/images/aaa/1_3.jpg", (byte[])null);
-      p.put("/images/aaa/2_1.jpg", (byte[])null);
-      p.put("/images/aaa/2_2.jpg", (byte[])null);
-      p.put("/images/aaa/2_3.jpg", (byte[])null);
-      p.put("/images/bbb/jpx.data", b);
-      p.put("/images/bbb/1_1.jpg", (byte[])null);
-
-
-      final PhotoBytesJpx j = new PhotoBytesJpx(p, "/images/aaa");
-      System.err.println(""+j);
+     {for(File f: new File(dir).listFiles()) stack.push(f);                     // Get top most folder contents
+      while(stack.size() > 0)
+       {final File f = stack.pop();
+        files.push(f.toString());
+        if (f.isDirectory()) for(final File r: f.listFiles()) stack.push(r);    // Expand each sub folder
+       }
      }
-    catch(Exception e)
-     {System.err.println(e);
-      e.printStackTrace();
+    catch (Exception e)
+     {say("Exception "+e); e.printStackTrace();
      }
+    return files;
    }
+
   static void say(Object...O) {Say.say(O);}
  } //C PhotoBytesJP
