@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/AndroidBuild/lib/
+#!/usr/bin/perl -I/home/phil/perl/cpan/AndroidBuild/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
 #-------------------------------------------------------------------------------
 # Generate an an Appa Apps Educational Android App on GitHub
 # Philip R Brenan at gmail dot com, Appa Apps Ltd Inc., 2020
@@ -8,6 +8,7 @@ use strict;
 use Carp;
 use Data::Dump qw(dump);
 use Data::Table::Text qw(:all !mmm);
+use GitHub::Crud qw(createIssueInCurrentRepo);
 use Android::Build;
 use feature qw(say current_sub);
 
@@ -119,24 +120,28 @@ sub githubUserDotRepo                                                           
 
 sub imageFiles(@) {grep {!m(/build/)} grep {m(images/.*\.(jpg|png)\Z)} @_}      # Image files
 
-sub squeezeFileName($)                                                          # Remove weird characters from a file name
- {my ($file) = @_;                                                              # File name
-  confess unless $file;
-  $file =~ s(\s) ()gsr =~ s([^a-zA-Z0-9/._-]) ()gsr;
- }
-
 my @messages;                                                                   # Messages
 sub mmm(@)                                                                      # Log messages with a time stamp and originating file and line number.
  {my (@m) = @_;                                                                 # Text
   my $m = join "\n", @_;
   say STDERR $m;
-  push @m, $m;
+  push @messages, $m;
  }
 
 sub eee(@)                                                                      # Log messages with a time stamp and originating file and line number.
  {my (@e) = @_;                                                                 # Text
   my $e = join "\n", @_;
-  confess $e;   # Raise an issue here as well
+  my $m = join "\n", @messages;
+  my $t = join " ", "Creation of app:", githubRepo, "failed";
+  my $b = join "\n", $e, $m;
+  createIssueInCurrentRepo($t, $b);
+  confess $e;
+ }
+
+sub successMessage                                                              # Write a success message
+ {my $t = join " ", "Success:", "creation of app:", githubRepo, "succeeded";
+  my $b = join "\n","See";
+  createIssueInCurrentRepo($t, $b);
  }
 
 sub convertImages(@)                                                            # Convert images to jpx
@@ -507,6 +512,7 @@ sub buildApp                                                                    
   copySpeechForCongratulations;
   removeBadFilesFromAssets;
   compileApp;
+  successMessage;
  }
 
 buildApp;
