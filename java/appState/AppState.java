@@ -597,10 +597,6 @@ public class AppState                                                           
       fact  = f;
      }
 
-    public boolean isPhoto()                                                    //M Photo
-     {return fact == null;
-     }
-
     public boolean isFact()                                                     //M Fact
      {return fact != null;
      }
@@ -765,7 +761,6 @@ public class AppState                                                           
   public void incNumberOfImagesToShow()                                         //M Increase number of images to show towards the ideal number of images to show for each level of play
    {final double  r = random.nextDouble() * 2 * rightInARowToEnterRaceMode;     // A probability related to the number of right answers required to start a race
     final int ideal = level + 2;                                                // Ideal number of images to show at each level
-say("LLLL ", " r=", r, " level=", level, "show =", numberOfImagesToShow+" Maximum="+actualMaximumNumberOfImagesToShow);
     if        (numberOfImagesToShow < 2)                                        // As this is a game we should move to game play fairly quickly
      {if      (r < 4) adjustNumberOfImagesToShow(true);
      }
@@ -837,7 +832,6 @@ say("LLLL ", " r=", r, " level=", level, "show =", numberOfImagesToShow+" Maximu
 
       changeLevel();                                                            // Change level check
 
-say("RRRRR111 ");
       startRaceIfReady();                                                       // Start a race if time to do so
 
       backGroundColour =                                                        // Set background color
@@ -930,28 +924,15 @@ say("RRRRR111 ");
          {public int compare() {return a.compare(b);}
          };
 
-      for(int i = 0; i <= 5; ++i)                                               // Progressively relax the rules to find something interesting to tell the student
-       {for(PhotoFact q : photoFacts)
-         {if (i < 5)
-           {//if (!q.photo.levelOk()) continue;                                 // Skip photos that are to be introduced later
-            if (i < 4)
-             {if (q.isFact() && !q.factQuestionable()) continue;                // Skip facts that are not yet usable as questions
-              if (i < 3)
-               {if (photoFactFilter.contains(q)) continue;                      // Skip recently seen photo facts
-                if (i < 2)
-                 {if (photoFilter.contains(q.photo)) continue;                  // Skip recently seen photos
-                  if (i < 1)
-                   {if (q.isFact() && factFilter.contains(q.fact)) continue;    // Skip recently seen facts
-                   }
-                 }
-               }
-             }
-           }
-          possibilities.put(q);                                                 // Possible question
-         }
-        if (possibilities.size() > 0)                                           // Choose from the possibilities
-         {return chooseFromOrderedStack(possibilities.selectFirstPart());
-         }
+      for(PhotoFact q : photoFacts)
+       {//if (q.isFact() && !q.factQuestionable())       continue;                // Skip facts that are not yet usable as questions
+        if (photoFactFilter.contains(q))               continue;                // Skip recently seen photo facts
+        //if (photoFilter.contains(q.photo))             continue;                // Skip recently seen photos
+        //if (q.isFact() && factFilter.contains(q.fact)) continue;                // Skip recently seen facts
+        possibilities.put(q);                                                   // Possible question
+       }
+      if (possibilities.size() > 0)                                             // Choose from the possibilities
+       {return chooseFromOrderedStack(possibilities.selectFirstPart());
        }
 
       return null;                                                              // This is not the question!
@@ -1017,7 +998,6 @@ say("RRRRR111 ");
 
     void startRaceIfReady()                                                     //M Start a race if possible
      {if (raceMode || screenShotMode()) return;                                 // No need to do anything if we are already in race mode or taking screen shots
-say("RRRRR222 "+rightInARowToEnterRaceMode+" "+rightInARowOverAll);
 
       raceMode = rightInARowToEnterRaceMode > 0 &&                              // Condition for entering race mode
                  rightInARowOverAll >= rightInARowToEnterRaceMode;
@@ -1277,11 +1257,9 @@ say("RRRRR222 "+rightInARowToEnterRaceMode+" "+rightInARowOverAll);
        (Photo chosenPhoto)                                                      //P The user responded by choosing this photo
        {this.chosenPhoto = chosenPhoto;                                         // Save chosen photo
         int bgc = ColoursTransformed.black;                                     // Default back ground colour - if we do not supply a background we see the question as well
-say("AAAAAAA response");
 
         if (!rightAnswer(chosenPhoto))                                          // Wrong answer - regardless of mode
          {chosenPhoto.photoFact.incWrong();                                     // Increment the wrong count for the photoFact associated with this photo
-say("AAAAAAA wrong anser");
           racesRightInARow = 0;                                                 // Number of races right in a row
 
           if (++numberOfWrongResponses >= maximumNumberOfWrongResponses)        // Wrong so often we are giving up
@@ -1360,13 +1338,10 @@ say("AAAAAAA wrong anser");
             chosenPhoto.similarFactOrTitle(currentQuestion.fact);
           if      (choices.size()         < 2) incNumberOfImagesToShow();       // Possibly increase the number of photos to show if there was only one choice
           else if (numberOfWrongResponses > 1) decNumberOfImagesToShow();       // Decrease the number of photos to show if more than one wrong responses
-say("AAAAAAA right "+numberOfImagesToShow);
-
          }
         else                                                                    // Right first time in the face of choices
          {final PhotoFact nextFactToPresent =                                   // Choose the next fact to present
             chosenPhoto.photoFact.chooseNextFact();
-say("AAAAAAA right first time"+numberOfImagesToShow);
 
           wrongInARowOverAll = 0;                                               // Reset wrong in a row
           giveUpInARow = 0;                                                     // Count the number of give ups in a row
@@ -1534,7 +1509,6 @@ say("AAAAAAA right first time"+numberOfImagesToShow);
   public void playMidi()                                                        //M Play a randomly chosen midi
    {final String  b = MidiTracks.chooseMusic();
     final boolean p = random.nextDouble() < level / levels;                     // Whether to play
-say("MMMMM 111 "+b);
 
     if (b != null)
      {switch(musicPlay)
@@ -1544,18 +1518,16 @@ say("MMMMM 111 "+b);
         case Finally  : if (!p) return; else break;                             // Play music finally
        }
       Midi.setVolumeScale(relativeMusicVolume);
-say("MMMMM 222"+b);
       Midi.playSound(b);
      }
     else
-     {say("Mo Midi Music available to play");
+     {say("No Midi Music available to play");
      }
    }
 
   public String chooseMidiRight()                                               //M Choose a midi for right first time at random
    {final String b = MidiTracks.chooseRight();
-    if (b == null) say("Mo Midi Right available to play");
-    else say("Choose Midi="+b);
+    if (b == null) say("No Midi Right available to play");
     return b;
    }
 
