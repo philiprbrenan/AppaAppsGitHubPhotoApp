@@ -20,18 +20,23 @@ public class Save                                                               
    {Save.saveDir = saveDir;                                                     // Save the folder name
    }
 
+  public static String editFileName                                             //M Remove / from file name to avoid having to create new folders
+   (String fileName)                                                            //P file name
+   {return fileName.replaceAll("/", "_");
+   }
+
   public static DataOutputStream out                                            //M Create a new stream for writing data to a specified file
    (String fileName)                                                            //P file name
     throws IOException
    {return new DataOutputStream                                                 // Create a new stream for writing data to a file in a pre-specified folder
-     (new FileOutputStream(new File(saveDir, fileName)));
+     (new FileOutputStream(new File(saveDir, editFileName(fileName))));
    }
 
   public static DataInputStream in                                              //M Create a new stream for reading data from a file in the pre-specified folder
    (String fileName)                                                            //P Name of file to read
     throws IOException
    {return new DataInputStream                                                  // Create a new stream for reading data from a file in a presepcified folder
-     (new FileInputStream(new File(saveDir, fileName)));
+     (new FileInputStream(new File(saveDir, editFileName(fileName))));
    }
 
   static void test()
