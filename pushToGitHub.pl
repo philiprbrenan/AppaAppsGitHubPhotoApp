@@ -27,14 +27,14 @@ if (1)                                                                          
 
   my @files = grep {!m(/(backup|build|z)/)}                                     # Select files ignoring backups, builds and tests
     searchDirectoryTreesForMatchingFiles($dir,
-      qw(.java .txt .jpg .png .pl .pm .md));
+      qw(.java .jpg .md .mp3 .pl .pm .png .txt));
 
   my %files = map {$_=>1} #grep {m(genApp.pm|Activity|Appstate)i}                # Filter files
     @files;
 
   for my $f(sort keys %files)                                                   # Upload each selected file
    {my $t = swapFilePrefix($f, $dir);
-    my $s = $f =~ m((jpg|png)\Z) ? readBinaryFile($f) : readFile($f);
+    my $s = $f =~ m((jpg|mp3|png)\Z) ? readBinaryFile($f) : readFile($f);
     lll "$f to $t ", writeFileUsingSavedToken($user, $repo, $t, $s);
    }
  }
