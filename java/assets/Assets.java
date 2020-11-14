@@ -37,11 +37,23 @@ public class Assets                                                             
     final int N = 1024;
     try
      {i = context.getAssets().open(assetFile);
-      o = context.openFileOutput(outFile, context.MODE_PRIVATE);
-      byte [] b = new byte[N*N];
+     }
+    catch (Exception e)
+     {say("Failed to open assets file: \""+assetFile+"\"");
+      e.printStackTrace();
+     }
+    if (i != null) try
+     {o = context.openFileOutput(outFile, Context.MODE_PRIVATE);
+     }
+    catch (Exception e)
+     {say("Failed to open real file: \""+outFile+"\"");
+      e.printStackTrace();
+     }
+    if (i != null && o != null) try
+     {byte [] b = new byte[N*N];
       for(int j = 0; j < N; ++j)
        {final int r = i.read(b);
-        if      (r == -1) {i.close(); o.close(); break;}
+        if      (r == -1) break;
         else if (r >   0) o.write(b, 0, r);
        }
      }
@@ -49,6 +61,23 @@ public class Assets                                                             
      {say("Failed to copy asset: "+assetFile);
       e.printStackTrace();
      }
+
+    if (i != null) try
+     {i.close();
+     }
+    catch (Exception e)
+     {say("Failed to close asset: "+assetFile);
+      e.printStackTrace();
+     }
+
+    if (o != null) try
+     {o.close();
+     }
+    catch (Exception e)
+     {say("Failed to close real file: "+outFile);
+      e.printStackTrace();
+     }
+
     return outFile;
    }
 
