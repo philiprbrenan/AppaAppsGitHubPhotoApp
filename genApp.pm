@@ -269,7 +269,7 @@ sub getImageSize($)                                                             
 sub  genAppDescription(@)                                                       # Generate java describing the app from the text and photos
  {my (@files) = @_;                                                             # Files - with images and text amongst them
   lll "Generate App Description";
-  my @t = sort {length($a) < length($b)} grep {fe($_) eq q(txt)} @files;        # Text files
+  my @t = sort {length($a) > length($b)} grep {fe($_) eq q(txt)} @files;        # Text files
   my @i = grep {imageFile $_}     @files;                                       # Image files
   my @j;                                                                        # Generated java
 
