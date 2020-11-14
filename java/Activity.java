@@ -141,7 +141,6 @@ public class Activity extends android.app.Activity                              
     Save.setSaveDir  (getSaveDir());                                            // Global saver
     Speech.setSaveDir(getSaveDir());                                            // Global speech player
     Midi.setSaveDir  (getSaveDir());                                            // Global midi   player
-    MidiTracks.load(Activity.this);                                            // Global midi   player
 
     display = new Display();                                                    // Create a new display for this session so that we the GPU state is reset
     setContentView(display);                                                    // Set the display
@@ -149,18 +148,10 @@ public class Activity extends android.app.Activity                              
     t.start();                                                                  // Start the drawing thread
     t.setPriority(Thread.MAX_PRIORITY);                                         // Draw as quickly as possible
     playing = true;                                                             // The app is playing
-    Assets.load(Activity.this);                                                 // Load asset file names
-//Midi.playSound("midi/music/64.mid");
-    //createLogo();
+    Assets         .load(Activity.this);                                        // Load asset file names
+    MidiTracks     .load(Activity.this);                                        // Load midi tracks
+    Congratulations.load(Activity.this);                                        // Load congratulations
    }
-
-//  private void createLogo()                                                     //M Create the logo display
-//   {final Svg s = new Svg();
-//    s.Text(presents, 0, 0,     1, 0.1f,  -1, -1);
-//    s.Text(logoText, 0, 0.1f,  1, 0.8f,   0,  0);
-//    s.Text(appTitle, 0, 0.8f,  1, 1.0f,   0, +1);
-//    svgLogo = s;
-//   }
 
   public void onStart()                                                         // Start
    {super.onStart();
@@ -172,10 +163,6 @@ public class Activity extends android.app.Activity                              
     restoreActivityState();                                                     // Restore state of Activity
     if (appState != null) appState.restore();                                   // Restore state of Appstate
     numberOfSessions++;                                                         // Increment number of sessions after install
-//    Fourier.speedMultiplier(totalTime() / warmUpSecs);                        // Bring the Fourier patterns up to speed through the warm up period
-//    if (lastDrawnSvg != null) lastDrawnSvg.onShow();                          // Restart the last Svg
-say("FFFF OnResume");
-//    newQuestion();
    }
 
   public double sessionTime()                                                   // Amount of time spent playing this app in this session
@@ -188,15 +175,15 @@ say("FFFF OnResume");
 
   public void onPause()                                                         // Pause
    {super.onPause();
-//    totalPlayTime = totalTime();                                                // Total play time before save in seconds
-//    saveActivityState();                                                        // Save state of Activity
-//    if (appState != null) appState.save();                                      // Save state of Appstate
-//    Speech.stop();                                                              // Stop sounds - speech
-//    Midi  .stop();                                                              // Stop sounds - midi
-//    if (display != null) display.stop = true;                                   // Stop drawing
-//    playing = false;                                                            // The app is no longer playing
-//  svgQuestion = svgResponse = null;                                           // Do not do this as it leaves the app hanging on the logo.
-//  lastQuestion = null; lastResponse = null;
+    totalPlayTime = totalTime();                                                // Total play time before save in seconds
+    saveActivityState();                                                        // Save state of Activity
+    if (appState != null) appState.save();                                      // Save state of Appstate
+    Speech.stop();                                                              // Stop sounds - speech
+    Midi  .stop();                                                              // Stop sounds - midi
+    if (display != null) display.stop = true;                                   // Stop drawing
+    playing = false;                                                            // The app is no longer playing
+    svgQuestion = svgResponse = null;                                           // Do not do this as it leaves the app hanging on the logo.
+    lastQuestion = null; lastResponse = null;
    }
 
   public void onStop()                                                          // Stop
