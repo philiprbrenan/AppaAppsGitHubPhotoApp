@@ -7,8 +7,8 @@ public class LoadAppDescription                                                 
     a.title = "AppaAppsGitHubPhotoApp";
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Spring L"; p.width = 4000; p.height = 3000;
-  p.title = "Spring L";
+  p.name  = "images/Spring L"; p.width = 1024; p.height = 768;
+  p.title = "Spring";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Spring.mp3"; f.title = "Spring";
@@ -58,8 +58,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Spring P"; p.width = 2266; p.height = 3399;
-  p.title = "Spring P";
+  p.name  = "images/Spring P"; p.width = 683; p.height = 1024;
+  p.title = "Spring";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Spring.mp3"; f.title = "Spring";
@@ -109,8 +109,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Summer L"; p.width = 2542; p.height = 2028;
-  p.title = "Summer L";
+  p.name  = "images/Summer L"; p.width = 1024; p.height = 817;
+  p.title = "Summer";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Summer.mp3"; f.title = "Summer";
@@ -165,8 +165,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Summer P"; p.width = 2821; p.height = 4264;
-  p.title = "Summer P";
+  p.name  = "images/Summer P"; p.width = 677; p.height = 1024;
+  p.title = "Summer";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Summer.mp3"; f.title = "Summer";
@@ -221,8 +221,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Autumn L"; p.width = 3648; p.height = 2736;
-  p.title = "Autumn L";
+  p.name  = "images/Autumn L"; p.width = 1024; p.height = 768;
+  p.title = "Autumn";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Autumn.mp3"; f.title = "Autumn";
@@ -267,8 +267,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Autumn P"; p.width = 2592; p.height = 3872;
-  p.title = "Autumn P";
+  p.name  = "images/Autumn P"; p.width = 685; p.height = 1024;
+  p.title = "Autumn";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Autumn.mp3"; f.title = "Autumn";
@@ -313,8 +313,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Winter L"; p.width = 3906; p.height = 2602;
-  p.title = "Winter L";
+  p.name  = "images/Winter L"; p.width = 1024; p.height = 682;
+  p.title = "Winter";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Winter.mp3"; f.title = "Winter";
@@ -369,8 +369,8 @@ public class LoadAppDescription                                                 
  }
 
  {AppDescription.Photo p = d.new Photo();
-  p.name  = "images/Winter P"; p.width = 3266; p.height = 4900;
-  p.title = "Winter P";
+  p.name  = "images/Winter P"; p.width = 683; p.height = 1024;
+  p.title = "Winter";
 
    {AppDescription.Fact f = d.new Fact();
     f.name = "audio/Winter.mp3"; f.title = "Winter";
