@@ -3,6 +3,7 @@
 // Philip R Brenan at gmail dot com, Appa Apps Ltd, 2017
 //------------------------------------------------------------------------------
 package com.appaapps;
+
 import android.media.MediaDataSource;
 import android.media.MediaPlayer;
 import android.os.SystemClock;
@@ -90,15 +91,15 @@ public class Speech                                                             
          {if (breakOut()) break;                                                // Finish this request if a new request has been added
           if (mds == null) continue;                                            // Skip this request if no data
 
-//          final double silence = getSilence(mds);                               // Check for silence
-//          if (silence > 0)                                                      // Play silence on a silence player
-//           {final long checks = Math.round(silence * 1000 / checkEvery);        // Number of checks to perform - silence players are very accurate in their estimation of their time to play
-//            for(long i = 0; i < checks; ++i)                                    // Check for early termination
-//             {android.os.SystemClock.sleep(checkEvery);                         // Wait a short while
-//              if (breakOut()) break;                                            // Finish this request if a new request comes in
-//             }
-//           }
-//          else                                                                // Play the sound on a media player
+          final double silence = getSilence(mds);                               // Check for silence
+          if (silence > 0)                                                      // Play silence on a silence player
+           {final long checks = Math.round(silence * 1000 / checkEvery);        // Number of checks to perform - silence players are very accurate in their estimation of their time to play
+            for(long i = 0; i < checks; ++i)                                    // Check for early termination
+             {android.os.SystemClock.sleep(checkEvery);                         // Wait a short while
+              if (breakOut()) break;                                            // Finish this request if a new request comes in
+             }
+           }
+          else                                                                 // Play the sound on a media player
            {final MediaPlayer m = createMediaPlayer(mds);                       // Create media player
             if (m == null) return;                                              // Media players are not always created reliably
             final int duration  = m.getDuration();                              // Duration in milliseconds
@@ -142,16 +143,19 @@ public class Speech                                                             
 
   public static double playTime                                                 //M Get the play time for a sound in seconds, caching the results
    (final String mds)                                                           //P Sound to play
-   {Double p = playTime.get(mds.hashCode());                                    // Check the cache first
-//    final double silence = getSilence(mds);                                     // Check for silence
-//    if (silence > 0) return silence;
+   {final double silence = getSilence(mds);                                     // Check for silence
+    if (silence > 0) return silence;                                            // Return silence if present
+    Double p = playTime.get(mds.hashCode());                                    // Check the cache first
     if (p == null)                                                              // Return answer from cache
      {final MediaPlayer m = createMediaPlayer(mds);                             // Create a media player for the sound and ask it for the play time of this sound
-      final long d = m.getDuration();                                           // Play time in milliseconds
-      p = d / 1000d;                                                            // Play time in seconds
-      playTime.put(mds.hashCode(), p);                                          // Add play time to cache
+      if (m != null)
+       {final long d = m.getDuration();                                         // Play time in milliseconds
+        p = d / 1000d;                                                          // Play time in seconds
+        playTime.put(mds.hashCode(), p);                                        // Add play time to cache
+        return p;
+       }
      }
-    return p;                                                                   // Return play time in seconds
+    return 0;                                                                   // Return play time in seconds
    }
 
   public static double totalPlayTime                                            //M Get the total play time for several sounds in seconds
@@ -161,36 +165,29 @@ public class Speech                                                             
     return t;                                                                   // Return total play time in seconds
    }
 
-//  public static String silence                                                  //M Request some silence
-//   (final double duration)                                                      //P Amount of silence in seconds
-//   {try
-//     {final String s = "silence  "+duration;
-//      return s.getBytes(StandardCharsets.UTF_8);                                // Silence specification as bytes
-//     }
-//    catch(Exception e)
-//     {say("Unable to create silence specification for: ", duration);
-//     }
-//    return null;
-//   }
-//
-//  public static double getSilence                                               //M Decode silence request
-//   (final String duration)                                                      //P Silence specification
-//   {if (duration == null) return 0;                                             //No silence requested
-//    try
-//     {final String s = new String(duration, StandardCharsets.UTF_8);
-//      if (!s.startsWith("silence  ")) return 0;
-//      return Double.parseDouble(s.substring(8));
-//     }
-//    catch(Exception e)
-//     {say("Unable to convert silence specification: ", duration);
-//     }
-//    return 0;
-//   }
+  public static String silence                                                  //M Request some silence
+   (final double duration)                                                      //P Amount of silence in seconds
+   {return "silence  "+duration;
+   }
+
+  public static double getSilence                                               //M Decode silence request
+   (final String duration)                                                      //P Silence specification
+   {if (duration != null && duration.startsWith("silence  "))                   // Silence requested
+     {try
+       {return Double.parseDouble(duration.substring(8));
+       }
+      catch(Exception e)
+       {say("Unable to convert silence specification: ", duration);
+       }
+     }
+    return 0;
+   }
 
   public static void main(String[] args)
    {say("Sound");
-//    say("silence(1) ", getSilence(silence(1)));
-//    say("silence(2) ", getSilence(silence(2)));
+    say("silence(1) ", getSilence(silence(1)));
+    say("silence(2) ", getSilence(silence(2)));
+    say("Hello World");
    }
 
   static void say(Object...O) {Say.say(O);}
