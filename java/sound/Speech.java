@@ -6,10 +6,10 @@ package com.appaapps;
 import android.media.MediaDataSource;
 import android.media.MediaPlayer;
 import android.os.SystemClock;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 import java.util.HashMap;
 
@@ -81,7 +81,6 @@ public class Speech                                                             
    (final int delay,                                                            //P Delay before playing sound in milliseconds
     final Stack<String> sounds)                                                 //P Sounds to play
    {stop();                                                                     // Stop any currently playing sound
-
     new Thread()
      {final int count = getRequests();
       public void run()
@@ -99,7 +98,7 @@ public class Speech                                                             
 //              if (breakOut()) break;                                            // Finish this request if a new request comes in
 //             }
 //           }
-//          else                                                                  // Play the sound on a media player
+//          else                                                                // Play the sound on a media player
            {final MediaPlayer m = createMediaPlayer(mds);                       // Create media player
             if (m == null) return;                                              // Media players are not always created reliably
             final int duration  = m.getDuration();                              // Duration in milliseconds
@@ -126,12 +125,13 @@ public class Speech                                                             
   private static MediaPlayer createMediaPlayer                                  //M Create a  media player to play a sound
    (final String file)                                                          //P Sound to play
    {try
-     {final FileInputStream is = new FileInputStream(file);                     // Load media player from sound file
-      final MediaPlayer m = new MediaPlayer();                                  // Single shot media player
-      if (m == null) return null;                                               // Media players are not always created reliably
-      m.setDataSource(is.getFD());                                              // Load sound into media player
-      is.close();
+     {final MediaPlayer m = new MediaPlayer();                                  // Single shot media player
+      String f = Assets.copyAssetsFileToRealFile(file);
+      FileInputStream i = Assets.context.openFileInput(f);
+
+      m.setDataSource(i.getFD());
       m.prepare();                                                              // Get the media player ready
+      i.close();
       return m;                                                                 // Return created media player
      }
     catch(Exception e)
