@@ -34,8 +34,10 @@ sub keyStoreDir          {fpd(homeDir,     q(keys))}                            
 sub keyStoreFile         {fpf(keyStoreDir, q(key.keystore))}                    # Key store file
 sub domainReversed       {qq(com.appaapps)}                                     # Domain name prefix in reverse order for these apps
 sub audioCacheDir        {fpd(homeDir,     q(audioCache))}                      # Audio files cache to avoid regenerating fiels on Polly
-sub audioAssetsFolder    {q(audio)}                                             # The audio folder in assets
-sub audioAssetsDir       {fpd(assetsDir,   audioAssetsFolder)}                  # Audio files in assets
+sub audioFactsFolder     {q(audio)}                                             # The audio folder in assets for facts
+sub audioFactsDir        {fpd(assetsDir,   audioFactsFolder)}                   # Audio files in assets for facts
+sub audioCongratsFolder  {q(congratulations)}                                   # The audio folder in assets for congratulations
+sub audioCongratsDir     {fpd(assetsDir,   audioCongratsFolder)}                # Audio files in assets for congratulations
 sub appPackage           {domainReversed.  q(.photoapp)}                        # App package name
 sub jpxTileSize          {256}                                                  # Size of jpx tiles
 sub jpxTilesMax          {4}                                                    # Maximum number of jpx tiles in either direction. Larger images are scaled down first to meet this requirement.  This prevents the creation of huge apps that crash when played.
@@ -83,6 +85,14 @@ sub sourceJavaFiles      {map{fpe(sourceJava, @$_, q(java))}                    
  }
 
 sub appPermissions {qw(INTERNET ACCESS_NETWORK_STATE WRITE_EXTERNAL_STORAGE)}   # App permissions - WES only required for earlier androids
+
+my @congratulations =                                                           # Add congratulatory phrases here
+ (q(You are Fantastic),   q(You are Amazing),  q(You are Outstanding),
+  q(You are Really Good), q(Congratulations),  q(You are Marvelous),
+  q(You are Wonderful),   q(You are Super),    q(You are Magnificent),
+  q(I am so impressed),   q(Way to go),        q(You are So Good),
+  q(You are Awesome),     q(You are The Best), q(I like your style),
+  q(You are so smart),    q(You are the Bees Knees), q(Nice going));
 
 sub icon                                                                        # Icon
  {my $i = fpf(imagesLocal, qw(icon));
@@ -146,8 +156,8 @@ sub copyMusic()                                                                 
   copyFolder(midiSourceDir, midiAssetsDir);
  }
 
-sub createSpeechFile($)                                                         # Create a speech file and return its name
- {my ($text) = @_;                                                              # Text to speak
+sub createSpeechFile($$)                                                        # Create a speech file and return its name
+ {my ($text, $speaker) = @_;                                                    # Text to speak, speaker
   my $a = fpe(audioCacheDir, $text, q(mp3));                                    # The file in the cache
 
   my $say = $text =~ s(\W)  ( )gr;                                              # Replace punctuation with space in speech
@@ -164,7 +174,7 @@ set AWS_SECRET_ACCESS_KEY=\$AWSPolly_SECRET_ACCESS_KEY;
         <prosody>$say</prosody>
      </speak>"
   --output-format mp3
-  --voice-id Amy "$a"
+  --voice-id $speaker "$a"
   --region eu-west-1
 END
   $c =~ s/\n/ /gs;                                                              # Put Polly command all on one line
@@ -179,15 +189,59 @@ END
   elsif ($r =~ /You must specify a region/)                                     # Complain about the region
    {eee "Tell the developer to specify a region for AWS Polly\n$r\n";
    }
+  elsif ($r =~ /The security token included in the request is invalid./)        # Complain about the security token
+   {eee <<END;
+Run from the command line with the AWS id and secret in variables:
+
+AWSPolly_ACCESS_KEY_ID
+AWSPolly_SECRET_ACCESS_KEY
+END
+   }
   elsif (!-e $a)                                                                # Confirm speech file generated
    {eee "Failed to generate audio file\n$a\n$r\nusing command:\n$c\n";
    }
   $a
  }
 
-sub copySpeech()                                                                # Copy speech to assets
+sub createSpeechFileForFact($)                                                  # Create a speech file for a fact and return its name
+ {my ($text) = @_;                                                              # Text to speak
+  my $f = createSpeechFile($text, "Amy");
+  my $t = fpf(audioFactsDir, fne($f));
+  createEmptyFile($t);
+  $f
+ }
+
+sub createSpeechFileForCongratulation($)                                        # Create a speech file for a congratulations and returns its name
+ {my ($text) = @_;                                                              # Text to speak
+  my $f = createSpeechFile($text, "Kendra");
+  my $t = fpf(audioCongratsDir, fne($f));
+  createEmptyFile($t);
+  $f
+ }
+
+sub createCongratulations()                                                     # Create congratulations
+ {lll "Create congratulations";
+  for my $c(@congratulations)
+   {createSpeechFileForCongratulation($c)
+   }
+ }
+
+sub overWriteTargetFiles($$)                                                    # Copy a source folder to a target folder but only for files that exist in the target
+ {my ($source, $target) = @_;                                                   # Source folder, target folder
+  for my $t(searchDirectoryTreesForMatchingFiles($target))
+   {my $s = fpf($source, fne($t));
+    copyBinaryFile($s, $t) if -e $t;
+   }
+ }
+
+sub copySpeechForFacts()                                                        # Copy facts peech to assets
  {lll "Copy speech";
-  copyFolder(audioCacheDir, audioAssetsDir);
+  overWriteTargetFiles(audioCacheDir, audioFactsDir)
+ }
+
+sub copySpeechForCongratulations()                                              # Copy congrats speech to assets
+ {lll "Copy congratulations";
+  overWriteTargetFiles(audioCacheDir, audioCongratsDir)
  }
 
 sub imageFile($)                                                                # Test whether a string could be an image file name
@@ -330,8 +384,8 @@ END
 END
        }
       for my $f(@f)                                                             # Create speech for facts
-       {my $F = fne createSpeechFile($f);
-        my $a = audioAssetsFolder;
+       {my $F = fne createSpeechFileForFact($f);
+        my $a = audioFactsFolder;
         push @j, <<END;
    {AppDescription.Fact f = d.new Fact();
     f.name = "$a/$F"; f.title = "$f";
@@ -448,7 +502,9 @@ sub buildApp                                                                    
   convertImages(imageFiles @files);
   createKey;
   copyMusic;
-  copySpeech;
+  copySpeechForFacts;
+  createCongratulations;
+  copySpeechForCongratulations;
   removeBadFilesFromAssets;
   compileApp;
  }
