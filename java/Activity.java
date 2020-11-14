@@ -124,16 +124,16 @@ public class Activity extends android.app.Activity                              
     tapTheRightAnswerIssued    =  0;
   private static double cTime;                                                  // Time the app was compiled
   private static boolean
-    autoPlayerStarted = false,                                                  // Whether the auto player has been started yet
+    autoPlayerStarted          = false,                                         // Whether the auto player has been started yet
     displayLog,                                                                 // User has requested that the log be displayed - the log will only be displayed if we are still within the compile time window to avoid having to manually turn this feature off before uploading to ogle play. The user has to specifically enable this mode with a swipe to stop ogle play complaining if they happen to test the app within the compile time window.
     devMode,                                                                    // App was created in dev mode
-    lastPressWasAutoPlayer = false,                                             // Whether the last press was made by the auto player or the student
+    lastPressWasAutoPlayer     = false,                                         // Whether the last press was made by the auto player or the student
     playing;                                                                    // App is currently playing
 
   public void onCreate(android.os.Bundle bundle)                                // Create the app
    {super.onCreate(bundle);
     filesFolder = getExternalFilesDir(null).toString();                         // Files folder
-    displayLog = false;                                                         // Do not  display the log unless the user requests it
+    displayLog  = true;                                                         // Do not  display the log unless the user requests it
     log = new com.appaapps.Log();                                               // Logging
     Fourier.speedMultiplierMinimum(speedMultiplierMinimum);                     // Set the minumum Gradient speed multiplier
     Email.set(this);                                                            // Provide context to the email
@@ -779,7 +779,7 @@ public class Activity extends android.app.Activity                              
 //       {say(code, name);
 //       }
 //     };
-//    screenShotUpload.run();                                                     // Use run() as we are already on the thread from octoline
+//    screenShotUpload.run();                                                   // Use run() as we are already on the thread from octoline
 //   }
 //------------------------------------------------------------- ----------------
 // Utilities
