@@ -233,13 +233,14 @@ public class AppState                                                           
       final PhotoFact pf = new PhotoFact(p, f);
       photoFacts.push(pf);
       p.facts.add(pf);                                                          // Create set of photo facts associated with each photo
+      if (p.photoFact == null) p.photoFact = pf;
      }
 
-    for(Photo p : photos)                                                       // Create a photo fact for each photo to represent its title
-     {final PhotoFact pf = new PhotoFact(p);
-      photoFacts.push(pf);
-      pf.photo.photoFact = pf;                                                  // PhotoFact for photo title from photo
-     }
+//    for(Photo p : photos)                                                       // Create a photo fact for each photo to represent its title
+//     {final PhotoFact pf = new PhotoFact(p);
+//      photoFacts.push(pf);
+//      pf.photo.photoFact = pf;                                                  // PhotoFact for photo title from photo
+//     }
 
     rightInARowOverAll = 0;                                                     // The number of questions the user has got right in a row
     wrongInARowOverAll = 0;                                                     // The number of questions the user has got wrong in a row
@@ -501,7 +502,7 @@ public class AppState                                                           
   public class Photo                                                            //C Photo details
     extends ShowAndTell                                                         //E Every photo has a title and a set of speakers who can say its title
    {final public Stack<PhotoFact> facts = new Stack<PhotoFact>();               // The photo facts describing facts associated with this photo
-    public PhotoFact photoFact = null;                                          // The photo fact describingthe title of this photo
+    public PhotoFact photoFact = null;                                          // The photo fact describing the title of this photo
     public PhotoBytes bitmap;                                                   // Compressed bitmap of photo
     final public AppDescription.Photo photoCmd;                                 // The command containing the parse of the information supplied  by the user for this photo
 
@@ -509,6 +510,7 @@ public class AppState                                                           
      (final AppDescription.Photo photoCmd)                                      //P Photo details from unpacked zip file
      {super("photo", photoCmd.name, photoCmd.title);
       this.photoCmd = photoCmd;
+      bitmap = new PhotoBytesJpx(Assets.files, photoCmd.name);
      }
 
     public Fact findSimilarFact                                                 //M Chose a fact for this photo which matches the aspect of the specified fact if possible
@@ -580,12 +582,12 @@ public class AppState                                                           
 //      fact  = pf.fact;
 //     }
 
-    PhotoFact                                                                   //c Describe a photo via its title
-     (Photo p)                                                                  //P Photo being described
-     {super(swingLimits(), "photoFact", p.name);                                // A name not already in use
-      photo = p;
-      fact  = null;
-     }
+//  PhotoFact                                                                   //c Describe a photo via its title
+//   (Photo p)                                                                  //P Photo being described
+//   {super(swingLimits(), "photoFact", p.name);                                // A name not already in use
+//    photo = p;
+//    fact  = null;
+//   }
 
     PhotoFact                                                                   //c Describe a photo via its title
      (Photo p,                                                                  //P Photo being described
@@ -763,6 +765,7 @@ public class AppState                                                           
   public void incNumberOfImagesToShow()                                         //M Increase number of images to show towards the ideal number of images to show for each level of play
    {final double  r = random.nextDouble() * 2 * rightInARowToEnterRaceMode;     // A probability related to the number of right answers required to start a race
     final int ideal = level + 2;                                                // Ideal number of images to show at each level
+say("LLLL ", " r=", r, " level=", level, "show =", numberOfImagesToShow+" Maximum="+actualMaximumNumberOfImagesToShow);
     if        (numberOfImagesToShow < 2)                                        // As this is a game we should move to game play fairly quickly
      {if      (r < 4) adjustNumberOfImagesToShow(true);
      }
@@ -834,6 +837,7 @@ public class AppState                                                           
 
       changeLevel();                                                            // Change level check
 
+say("RRRRR111 ");
       startRaceIfReady();                                                       // Start a race if time to do so
 
       backGroundColour =                                                        // Set background color
@@ -879,6 +883,7 @@ public class AppState                                                           
        {final Photo cPhoto = currentQuestion.photo;                             // Photo associated with current question
         final Fact cFact   = currentQuestion.fact;                              // Fact being questioned if in fact it is a fact
         final int cqp = Maths.isqrt(cPhoto.photoFact.presented);                // Number of times the photo associated with the question has been presented square rooted
+
         for(Photo photo : photos)                                               // Each photo
 //       {if (photo == cPhoto || !photo.levelOk()) continue;                    // Obviously not the answer or photos that are not yet in play
          {if (photo == cPhoto) continue;                                        // Obviously not the answer
@@ -1012,6 +1017,8 @@ public class AppState                                                           
 
     void startRaceIfReady()                                                     //M Start a race if possible
      {if (raceMode || screenShotMode()) return;                                 // No need to do anything if we are already in race mode or taking screen shots
+say("RRRRR222 "+rightInARowToEnterRaceMode+" "+rightInARowOverAll);
+
       raceMode = rightInARowToEnterRaceMode > 0 &&                              // Condition for entering race mode
                  rightInARowOverAll >= rightInARowToEnterRaceMode;
       if (!raceMode) return;                                                    // No need to do anything if we are not in race mode
@@ -1174,7 +1181,6 @@ public class AppState                                                           
            {final float cx = i * fx, cy = j * fy;                               // Corner position
             if (speakerMode && p >= choices.size()) break;
             final Photo photo = show.elementAt(p++);                            // Photo
-say("SSSSSSSS 2222 "+photo.bitmap);
             if (photo.bitmap != null)
              {displayed.push                                                    // Record the Svg elements being used to display this photo as a question
                (new Tile(photo,
@@ -1187,7 +1193,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
               if (speakerMode)                                                  // In speaker mode just say the item when it is touched
                {e.tapAction(new Runnable()
                  {public void run()
-                   {final String s = photo.createMediaDataSource();
+                   {final String s = photo.photoFact.fact.createMediaDataSource();
                     Speech.playSound(s);
                    }
                  });
@@ -1271,9 +1277,11 @@ say("SSSSSSSS 2222 "+photo.bitmap);
        (Photo chosenPhoto)                                                      //P The user responded by choosing this photo
        {this.chosenPhoto = chosenPhoto;                                         // Save chosen photo
         int bgc = ColoursTransformed.black;                                     // Default back ground colour - if we do not supply a background we see the question as well
+say("AAAAAAA response");
 
         if (!rightAnswer(chosenPhoto))                                          // Wrong answer - regardless of mode
          {chosenPhoto.photoFact.incWrong();                                     // Increment the wrong count for the photoFact associated with this photo
+say("AAAAAAA wrong anser");
           racesRightInARow = 0;                                                 // Number of races right in a row
 
           if (++numberOfWrongResponses >= maximumNumberOfWrongResponses)        // Wrong so often we are giving up
@@ -1291,7 +1299,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
           //wrongSounds.push
           // (wrongTitle.createMediaDataSource(speaker2, speechEmphasis));      // Set response for wrong part of wrong/right
 
-            wrongSounds.push(chosenPhoto.createMediaDataSource());              // Say the title
+            wrongSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());// Say the title
 
             if (wrongTitle != null && wrongTitle != chosenPhoto)                // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//wrongSounds.push(interPhraseGap);
@@ -1302,7 +1310,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
               currentQuestion.fact : currentQuestion.photo;
             //rightSounds.push(questionSound(true));                            // Play the question against the right answer so the user selects the right answer for the sound from only one choice. The sound is said emphasized. The right answer is displayed on the right or bottom.
 
-            rightSounds.push(currentQuestion.photo.createMediaDataSource());    // Say the title
+            rightSounds.push(currentQuestion.photo.photoFact.fact.createMediaDataSource());    // Say the title
 
             if (rightTitle != null && rightTitle != currentQuestion.photo)      // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//rightSounds.push(interPhraseGap);
@@ -1320,7 +1328,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
           // (rightTitle.createMediaDataSource(speaker2, speechEmphasis));      // Say correct title or related fact from the wrongly chosen photo
 
           //rightSounds.push(interPhraseGap);
-            rightSounds.push(chosenPhoto.createMediaDataSource());              // Say the title
+            rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());              // Say the title
 
             if (rightTitle != null && rightTitle != chosenPhoto)                // Say a fact that the stuent might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
              {//rightSounds.push(interPhraseGap);
@@ -1332,18 +1340,18 @@ say("SSSSSSSS 2222 "+photo.bitmap);
          }
         else if (numberOfWrongResponses > 0 || choices.size() < 2)              // Right eventually or right because there was no other choice
          {if (numberOfWrongResponses > 0)
-           {wrongInARowOverAll = rightInARowOverAll = 0;                          // Reset wrong in a row and also right in a row  because the student was not right first time
+           {wrongInARowOverAll = rightInARowOverAll = 0;                        // Reset wrong in a row and also right in a row  because the student was not right first time
            }
           mark = Mark.rightAfterWrong;                                          // Right after being wrong
 
 //        rightSounds.push(questionSound(false));                               // Play the question against the right answer so the user selects the right answer for the sound from only one choice
 
 //        rightSounds.push(interPhraseGap);
-          rightSounds.push(chosenPhoto.createMediaDataSource());                // Say the title of the chosen photo
+//          rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());                // Say the title of the chosen photo
 
           if (currentQuestion.fact != null)                                     // Say the fact again if there is a fact
            {//rightSounds.push(interPhraseGap);
-            rightSounds.push(currentQuestion.fact.createMediaDataSource());
+            rightSounds.push(currentQuestion.photo.photoFact.fact.createMediaDataSource());
            }
 
           bgc = ColoursTransformed.darkMagenta;                                 // Dark Magenta means right after wrong
@@ -1352,10 +1360,13 @@ say("SSSSSSSS 2222 "+photo.bitmap);
             chosenPhoto.similarFactOrTitle(currentQuestion.fact);
           if      (choices.size()         < 2) incNumberOfImagesToShow();       // Possibly increase the number of photos to show if there was only one choice
           else if (numberOfWrongResponses > 1) decNumberOfImagesToShow();       // Decrease the number of photos to show if more than one wrong responses
+say("AAAAAAA right "+numberOfImagesToShow);
+
          }
         else                                                                    // Right first time in the face of choices
          {final PhotoFact nextFactToPresent =                                   // Choose the next fact to present
             chosenPhoto.photoFact.chooseNextFact();
+say("AAAAAAA right first time"+numberOfImagesToShow);
 
           wrongInARowOverAll = 0;                                               // Reset wrong in a row
           giveUpInARow = 0;                                                     // Count the number of give ups in a row
@@ -1384,7 +1395,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
             rightTitle = currentQuestion.fact;
            }
           else                                                                  // No facts available so say the title again
-           {rightSounds.push(chosenPhoto.createMediaDataSource());              // Say the title of the chosen photo
+           {rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());              // Say the title of the chosen photo
             rightTitle = currentQuestion.showAndTell();                         // Show current question title if no new fact to present
            }
 
@@ -1523,6 +1534,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
   public void playMidi()                                                        //M Play a randomly chosen midi
    {final String  b = MidiTracks.chooseMusic();
     final boolean p = random.nextDouble() < level / levels;                     // Whether to play
+say("MMMMM 111 "+b);
 
     if (b != null)
      {switch(musicPlay)
@@ -1532,6 +1544,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
         case Finally  : if (!p) return; else break;                             // Play music finally
        }
       Midi.setVolumeScale(relativeMusicVolume);
+say("MMMMM 222"+b);
       Midi.playSound(b);
      }
     else
@@ -1542,6 +1555,7 @@ say("SSSSSSSS 2222 "+photo.bitmap);
   public String chooseMidiRight()                                               //M Choose a midi for right first time at random
    {final String b = MidiTracks.chooseRight();
     if (b == null) say("Mo Midi Right available to play");
+    else say("Choose Midi="+b);
     return b;
    }
 
