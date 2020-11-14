@@ -42,6 +42,8 @@ public class Midi                                                               
    (final String file)                                                          //P Byte stream containing midi instructions
    {stop();                                                                     // Stop any currently playing sound
 
+    final String realFile = Assets.copyAssetsFileToRealFile(file);
+
     new Thread()
      {final int count = getRequests();                                          // Current request number
       public void run()
@@ -49,8 +51,8 @@ public class Midi                                                               
          {final MediaPlayer m1 = new MediaPlayer();                             // Alternate two players to avoid loop gap
           final MediaPlayer m2 = new MediaPlayer();
           if (m1 == null || m2 == null) return;                                 // Media players are not always created reliably
-          final FileInputStream is1 = new FileInputStream(file);                // Load sound file into each player
-          final FileInputStream is2 = new FileInputStream(file);
+          final FileInputStream is1 = Assets.context.openFileInput(realFile);   // Load sound file into each player
+          final FileInputStream is2 = Assets.context.openFileInput(realFile);
           m1.setDataSource(is1.getFD());
           m2.setDataSource(is2.getFD());
           is1.close();
