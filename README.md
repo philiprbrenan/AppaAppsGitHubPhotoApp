@@ -60,9 +60,9 @@ The access key and secret access key you obtained from AWS should be installed
 as two secrets in the settings for your forked copy of this repository as in:
 
 ~~~~
-  Key_______________________   Value___________________________________
-  AWSPolly_ACCESS_KEY_ID       AKIAJ52VV343RSTUV5NQ
-  AWSPolly_SECRET_ACCESS_KEY   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
+  Key_______________________   Value____________________________________
+  AWSPolly_ACCESS_KEY_ID       20 characters in upper case A-Z 0-9
+  AWSPolly_SECRET_ACCESS_KEY   40 characters in mixed case a-z A-z 0-9 /
 ~~~~
 
 using: [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
