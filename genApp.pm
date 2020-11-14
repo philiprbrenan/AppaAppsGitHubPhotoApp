@@ -281,7 +281,7 @@ sub  genAppDescription(@)                                                       
      mmm(<<END)
 Several .txt files found which might contain a description of the app.
 
-Choosing the first .txt file:
+Choosing this .txt file:
   $t
 
 Ignoring these .txt files:
@@ -495,8 +495,53 @@ sub removeBadFilesFromAssets                                                    
    }
  }
 
+sub stateOfPlay                                                                 # The state of play
+ {+{
+  home                 => home
+, develop              => develop
+, homeDir              => homeDir
+, homeJava             => homeJava
+, appActivity          => appActivity
+, appDebuggable        => appDebuggable
+, androidSdk           => androidSdk
+, appBuildDir          => appBuildDir
+, assetsDir            => assetsDir
+, buildVersion         => buildVersion
+, buildTools           => buildTools
+, platform             => platform
+, platformTools        => platformTools
+, sdkLevels            => sdkLevels
+, aapt                 => aapt
+, keyAlias             => keyAlias
+, keyStorePwd          => keyStorePwd
+, keyStoreDir          => keyStoreDir
+, keyStoreFile         => keyStoreFile
+, domainReversed       => domainReversed
+, audioCacheDir        => audioCacheDir
+, audioFactsFolder     => audioFactsFolder
+, audioFactsDir        => audioFactsDir
+, audioCongratsFolder  => audioCongratsFolder
+, audioCongratsDir     => audioCongratsDir
+, appPackage           => appPackage
+, jpxTileSize          => jpxTileSize
+, jpxTilesMax          => jpxTilesMax
+, maxImageSize         => maxImageSize
+, maxImageSizeGH       => maxImageSizeGH
+, minimumImageFileSize => minimumImageFileSize
+, minimumSoundFileSize => minimumSoundFileSize
+, imagesFolder         => imagesFolder
+, imagesApp            => imagesApp
+, midiSourceDir        => midiSourceDir
+, midiAssetsDir        => midiAssetsDir
+, imagesLocal          => imagesLocal
+, sourceJava           => sourceJava
+, sourceActivity       => sourceActivity
+}}
+
 sub buildApp                                                                    # Build an app
- {makePath(appBuildDir); #clearFolder(appBuildDir, 999);                  # Clear build folder
+ {say STDERR dump(stateOfPlay);
+
+  makePath(appBuildDir); #clearFolder(appBuildDir, 999);                  # Clear build folder
 
   my @files = searchDirectoryTreesForMatchingFiles(homeDir);                    # Files available
 
