@@ -28,7 +28,9 @@ public class MidiTracks                                                         
    {try
      {if (context != null)                                                      // On Android
        {String [] files = context.getAssets().list(folder);                     // Files in folder
-        for(String f: files) stack.push(f);
+        for(String f: files)
+         {stack.push(f);
+         }
        }
       else                                                                      // On Ubuntu
        {File p = new File("/home/phil/AppaAppsGitHubPhotoApp/"+folder);
@@ -48,10 +50,10 @@ public class MidiTracks                                                         
    }
 
   public static String chooseMusic()                                            //M Choose a music track at random
-   {return choose.chooseFromStack(midiMusic);                                   // Choose midi music
+   {return music+"/"+choose.chooseFromStack(midiMusic);                         // Choose midi music
    }
   public static String chooseRight()                                            //M Choose a right track at random
-   {return choose.chooseFromStack(midiRight);                                   // Choose midi right
+   {return right+"/"+choose.chooseFromStack(midiRight);                         // Choose midi right
    }
 
   public static void printMusic                                                 //M Print details of a music stack
