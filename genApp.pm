@@ -539,7 +539,7 @@ sub stateOfPlay                                                                 
 }}
 
 sub buildApp                                                                    # Build an app
- {say STDERR dump(stateOfPlay, \%ENV);                                          # Status quo antes
+ {say STDERR dump(stateOfPlay, \%ENV) unless develop;                           # Status quo antes
 
   makePath(appBuildDir); #clearFolder(appBuildDir, 999);                        # Clear build folder
 
