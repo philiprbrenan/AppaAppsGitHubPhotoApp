@@ -43,7 +43,7 @@ public class Midi                                                               
    {stop();                                                                     // Stop any currently playing sound
 
     final String realFile = Assets.copyAssetsFileToRealFile(file);
-
+say("PPPPP Play ", file, " ", realFile);
     new Thread()
      {final int count = getRequests();                                          // Current request number
       public void run()
