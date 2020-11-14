@@ -539,9 +539,9 @@ sub stateOfPlay                                                                 
 }}
 
 sub buildApp                                                                    # Build an app
- {say STDERR dump(stateOfPlay);
+ {say STDERR dump(stateOfPlay, \%ENV);                                          # Status quo antes
 
-  makePath(appBuildDir); #clearFolder(appBuildDir, 999);                  # Clear build folder
+  makePath(appBuildDir); #clearFolder(appBuildDir, 999);                        # Clear build folder
 
   my @files = searchDirectoryTreesForMatchingFiles(homeDir);                    # Files available
 
