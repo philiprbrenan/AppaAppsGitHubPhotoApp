@@ -74,10 +74,16 @@ jobs:
        mkdir keys
        keytool -genkey -v -keystore keys/key.keystore -keyalg RSA -keysize 2048 -validity 10000 -storepass 121212 -alias key -dname 'CN=a, OU=a, O=a, L=a, ST=a, C=a'
 
-    - name: Install Perl
+    - name: Install Perl Data::Table::Text
       run: |
         sudo cpan -T install Data::Table::Text
+
+    - name: Install Perl Android::Build
+      run: |
         sudo cpan -T install Android::Build
+
+    - name: Install Perl GitHub::Crud
+      run: |
         sudo cpan -T install GitHub::Crud
 
     - name: Check Perl
@@ -94,34 +100,17 @@ jobs:
 
     - name: GenApp
       run: |
-        perl perl/genApp.pm
+        perl genApp.pm
 
     - name: Tree2
       run: |
         tree
+
+    - uses: actions/upload-artifact\@v2
+      with:
+        name: apk
+        path: build/bin/*.apk
 END
-        #sudo cpan -T install Carp
-        #sudo cpan -T install CGI
-        #sudo cpan -T install Unicode::UTF8
-        #sudo cpan -T install Time::HiRes
-        #sudo cpan -T install Aws::Polly::Select
-        #sudo cpan -T install Data::Dump
-        #sudo cpan -T install Data::GUID
-        #sudo cpan -T install Data::Send::Local
-        #sudo cpan -T install Data::Unique::Name
-        #sudo cpan -T install Digest::MD5
-        #sudo cpan -T install Digest::SHA
-        #sudo cpan -T install Digest::SHA1
-        #sudo cpan -T install File::Copy
-        #sudo cpan -T install Google::Translate::Languages
-        #sudo cpan -T install ISO::639
-        #sudo cpan -T install JSON
-        #sudo cpan -T install Module::Build
-        #sudo cpan -T install POSIX
-        #sudo cpan -T install Storable
-        #sudo cpan -T install Test::More
-        #sudo cpan -T install Test2::Bundle::More
-        #sudo cpan -T install Text::Numbers::100
 
   lll "Work flow to $repo ", writeFileUsingSavedToken($user, $repo, $wf, $y);
  }
