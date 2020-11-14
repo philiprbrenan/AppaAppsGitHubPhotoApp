@@ -5,44 +5,62 @@
 package com.appaapps;
 
 import android.content.Context;
+
+import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.util.Stack;
 
 public class Assets                                                             //C Assets
- {public static Stack<String> files = new Stack<String>();
+ {public final static Stack<String> files = new Stack<String>();                // Files in assets
+  public       static Context context;                                          // Context
 
-  public static void load                                                       //M Asset file names
+  public static void load                                                       //M Load asset file names
    (Context context)                                                            //P Context
-   {Stack<String> stack = new Stack<String>();
+   {Assets.context      = context;                                              // Context
+    Stack<String> stack = new Stack<String>();                                  // Folders awaiting expansion
+
     try
-     {for(String s: context.getAssets().list(""))
-       {say("Asset:", s);
-        stack.push(s);
-       }
+     {for(String s: context.getAssets().list("")) stack.push(s);                // Get top most folder contents
       while(stack.size() > 0)
-       {String s = stack.pop();
-        files.push(s);
-        for(String r: context.getAssets().list(s))
-         {String q = s+'/'+r;
-          stack.push(q);
-          say("Asset:", q);
-         }
+       {final String s = stack.pop();     files.push(s);
+        for(final String r: context.getAssets().list(s)) stack.push(s+'/'+r);   // Expand each sub folder
        }
      }
     catch (Exception e) {}
    }
 
-  public static void print()                                                    //M Print asset file names
-   {for(String s: files)
-     {say("Asset:", s);
+  public static String copyAssetsFileToRealFile                                 //M Copy an asset sound file to a proper file that can be used by the media player.
+   (String assetFile)                                                           //P An asset file name
+   {String outFile = assetFile.replaceAll("/", "_");
+    InputStream      i = null;
+    FileOutputStream o = null;
+    final int N = 1024;
+    try
+     {i = context.getAssets().open(assetFile);
+      o = context.openFileOutput(outFile, context.MODE_PRIVATE);
+      byte [] b = new byte[N*N];
+      for(int j = 0; j < N; ++j)
+       {final int r = i.read(b);
+        if      (r == -1) {i.close(); o.close(); break;}
+        else if (r >   0) o.write(b, 0, r);
+       }
      }
+    catch (Exception e)
+     {say("Failed to copy asset: "+assetFile);
+      e.printStackTrace();
+     }
+    return outFile;
    }
 
-  public static void main(String arg[])
-   {
+  public static void print()                                                    //M Print asset file names
+   {for(String s: files) say("Asset:", s);
+   }
+
+  public static void main(String[] args)                                        //m Test
+   {System.out.println("Hello World\n");
    }
 
   private static void say(Object...o)                                           // Log a message
    {com.appaapps.Log.say(o);
    }
  } //C Assets
-
