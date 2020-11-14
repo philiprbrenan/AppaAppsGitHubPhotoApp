@@ -18,7 +18,7 @@ public class Congratulations                                                    
   public static class Congratulation
    {String text;
     String sound;
-    Congratulation(String text, String sound)
+    Congratulation(String sound, String text)
      {this.text  = text;
       this.sound = sound;
      }
@@ -26,16 +26,20 @@ public class Congratulations                                                    
 
   public static Congratulation choose()                                         //M Choose a congratulation at random
    {String s = choose.chooseFromStack(stack);
-    String t = s.replaceAll("^.*/", "").replaceAll("\\.\\w+$", "");
-    return new Congratulation(s, t);
+    if (s != null)
+     {String t = s.replaceAll("^.*/", "").replaceAll("\\.\\w+$", "");
+      return new Congratulation(s, t);
+     }
+    return null;
    }
 
   public static void load                                                       //C Available congratulations
    (Context context)                                                            //P Android context if called from Android - should be set in Activity - else null
    {try
      {if (context != null)                                                      // On Android
-       {String [] files = context.getAssets().list("congratulations");          // Files in folder
-        for(String f: files) stack.push(f);
+       {for(String k: Assets.files)
+         {if (k.startsWith("congratulations")) stack.push(k);
+         }
        }
       else                                                                      // On Ubuntu
        {File p = new File("/home/phil/AppaAppsGitHubPhotoApp/congratulations");
