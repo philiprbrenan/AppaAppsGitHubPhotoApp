@@ -54,7 +54,6 @@ the line.  Here is a sample file layout:
 ## Synthesizing Speech
 
 I need a userid and secret from: [AWS Polly](https://docs.aws.amazon.com/polly/latest/dg/security-iam.html#security_iam_authentication)
-
 to synthesize the speech used by the app.
 
 The access key and secret access key you obtained from AWS should be installed
@@ -75,9 +74,9 @@ what needs to be done to create your app.
 
 # Problems
 
-Create an issue against this repository if yiou need help.
+Create an issue against this repository if you need help.
 
-# Acknowledgements
+# Acknowledgments
 
 The following Perl modules are used to create educational android apps for you:
 
