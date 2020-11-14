@@ -16,7 +16,8 @@ lll "GenApp 3";
 
 sub home    {$ENV{HOME}}                                                        # Home folder
 sub develop {home =~ m(\A/home/phil\Z) ? 1 : 0}                                 # Developing
-sub homeDir {develop ? fpd(home, q(AppaAppsGitHubPhotoApp)) : &gitHubHome}      # Working folder
+sub homeDir {develop ? fpd(home, q(AppaAppsGitHubPhotoApp)) :                   # Working folder
+                       $ENV{GITHUB_GITHUB_WORKSPACE}};
 sub homeJava             {fpd(homeDir, q(java))}                                # Java files
 sub appActivity          {qq(Activity)}                                         # Name of Activity = $activity.java file containing onCreate() for this app
 sub appDebuggable        {0}                                                    # Add debugabble to app manifest if true
@@ -107,11 +108,6 @@ sub githubRepo                                                                  
   my $s = $ENV{GITHUB_REPOSITORY};
   (split m(/), $s)[-1];
  }
-
-sub gitHubHome                                                                  # Github home
- {my $d = githubRepo;
-  fpd(q(/home/runner/work), $d, $d)
-  }
 
 sub githubUserDotRepo                                                           # Icon
  {return "AppaAppsGitHub.PhotoApp" if develop;
