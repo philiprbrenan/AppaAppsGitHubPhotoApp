@@ -136,7 +136,9 @@ sub eee(@)                                                                      
 
 sub successMessage                                                              # Write a success message
  {my $t = join " ", "Success:", "creation of app:", githubRepo, "succeeded";
-  my $b = join "\n","See";
+  my $s = join "\n","See: ";
+  my $m = join "\n", @messages;
+  my $b = join "\n", $s, $m;
   createIssueInCurrentRepo($t, $b);
  }
 
