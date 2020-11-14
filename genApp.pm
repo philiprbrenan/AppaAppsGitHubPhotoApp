@@ -195,6 +195,18 @@ sub imageFile($)                                                                
   $string =~ m(jpg|png)i
  }
 
+sub getImageSize($)                                                             # Cache image sizes to speed up compile
+ {my ($image) = @_;                                                             # Image file name
+  my $j = fpe(imagesApp, fn($image), qw(jpx data));
+  if (-e $j)
+   {my $s = readFile($j);
+    if ($s =~ m(width\s*(\d+).*height\s*(\d+))s)
+     {return ($1, $2)
+     }
+   }
+  imageSize($image)
+ }
+
 sub  genAppDescription(@)                                                       # Generate java describing the app from the text and photos
  {my (@files) = @_;                                                             # Files - with images and text amongst them
   lll "Generate App Description";
@@ -308,9 +320,9 @@ END
 
       if (1)
        {my $b = fn $i;
-        my $t = trim fn $i;
+        my $t = $f[0] // '';
         my $a = imagesFolder;
-        my ($w, $h) = imageSize($i);
+        my ($w, $h) = getImageSize($i);
         push @j, <<END;                                                         # Photo java
  {AppDescription.Photo p = d.new Photo();
   p.name  = "$a/$b"; p.width = $w; p.height = $h;
