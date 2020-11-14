@@ -93,7 +93,7 @@ public class Activity extends android.app.Activity                              
     appName,                                                                    // Name of the app which is also the second part of the repository name on GitHub
     appPath,                                                                    // Path of the app which is the third and last components of the repository name on GitHub
     appTitle,                                                                   // Title of the app
-    currentLanguage,                                                            // The current language
+//  currentLanguage,                                                            // The current language
     downloadUrl,                                                                // Url from which to download the content of the app
     filesFolder,                                                                // Folder in which app places files
     guid,                                                                       // Guid for this app
@@ -141,6 +141,7 @@ public class Activity extends android.app.Activity                              
     Save.setSaveDir  (getSaveDir());                                            // Global saver
     Speech.setSaveDir(getSaveDir());                                            // Global speech player
     Midi.setSaveDir  (getSaveDir());                                            // Global midi   player
+    MidiTracks.load(Activity.this);                                            // Global midi   player
 
     display = new Display();                                                    // Create a new display for this session so that we the GPU state is reset
     setContentView(display);                                                    // Set the display
@@ -149,7 +150,7 @@ public class Activity extends android.app.Activity                              
     t.setPriority(Thread.MAX_PRIORITY);                                         // Draw as quickly as possible
     playing = true;                                                             // The app is playing
     Assets.load(Activity.this);                                                 // Load asset file names
-    Assets.print();
+//Midi.playSound("midi/music/64.mid");
     //createLogo();
    }
 
@@ -221,7 +222,7 @@ say("FFFF OnResume");
       o.writeUTF("numberOfSessions"); o.writeInt(numberOfSessions);             // Number of sessions
       o.writeUTF("totalPlayTime");    o.writeDouble(totalPlayTime);             // Total play time
       o.writeUTF("appFirstStarted");  o.writeDouble(appFirstStarted);           // App first started time in milliseconds
-      o.writeUTF("currentLanguage");  o.writeUTF(currentLanguage);              // Current language the app is playing
+//    o.writeUTF("currentLanguage");  o.writeUTF(currentLanguage);              // Current language the app is playing
       o.writeUTF("xxx");                                                        // Terminator
      }
     catch(Exception e)
@@ -259,17 +260,14 @@ say("FFFF OnResume");
 //------------------------------------------------------------------------------
 
   public void newQuestion()                                                     // Show the next question
-   {say("AAAA 1111");
-      if (appState == null)
+   {if (appState == null)
      {appState = new AppState(new LoadAppDescription().load());
      }
     lastQuestion = appState.new Question();                                     // The latest question
-say("AAAA 2222");
 
     Fourier.speedMultiplier(totalTime() / warmUpSecs);                          // Bring the Fourier patterns up to speed through the warm up period
 
     final Point size = display.size;                                            // Finalize the size
-say("AAAA 3333"+size);
     final Svg S      = svgQuestion = lastQuestion.svg(size.x, size.y);          // Show question choices
     svgResponse      = null;                                                    // No response now we have a question to show
     lastResponse     = null;                                                    // No response now we have a question to show
@@ -571,12 +569,9 @@ say("AAAA 3333"+size);
 
     public void surfaceCreated(SurfaceHolder holder)                            // Amazingly the caller must reliniquish the main thread to allwo the main thread to create the surface.
      {startDrawing();
-say("DDDDD created");
       new Runnable()
        {public void run()
-         {say("DDDDD 1111");
-          while(display.size == null) SystemClock.sleep(waitForDisplay);        // Wait until we know the size of the drawing area
-          say("DDDDD 2222");
+         {while(display.size == null) SystemClock.sleep(waitForDisplay);        // Wait until we know the size of the drawing area
           runOnUiThread(new Runnable()
            {public void run()
              {newQuestion();
@@ -986,7 +981,7 @@ say("DDDDD created");
 "<tr><td>autoPlayerC1           <td>"+autoPlayerC1                     +"\n"+
 "<tr><td>autoPlayerC2           <td>"+autoPlayerC2                     +"\n"+
 "<tr><td>cTime                  <td>"+formatTime(cTime)                +"\n"+
-"<tr><td>currentLanguage        <td>"+currentLanguage                  +"\n"+
+//"<tr><td>currentLanguage        <td>"+currentLanguage                  +"\n"+
 "<tr><td>devMode                <td>"+devMode                          +"\n"+
 "<tr><td>displayLog             <td>"+displayLog                       +"\n"+
 "<tr><td>downloadUrl            <td>"+downloadUrl                      +"\n"+
