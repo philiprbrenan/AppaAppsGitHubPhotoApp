@@ -70,7 +70,7 @@ public class AppState                                                           
     maximumNumberOfWrongResponses,                                              // Maximum number of wrong responses before we give up and move onto a new question
     maximumNumberOfWrongRaceResponses  = 3,                                     // Maximum number of wrong responses in a race on the same question
     minimumFilterWidth                 = 3,                                     // Minimum filter width - so we always get some filtration
-    minimumNumberOfImagesToShow        = 1,                                     // Minimum number of images to show but this should really be set by the app author
+    minimumNumberOfImagesToShow        = 2, //TEST                              // Minimum number of images to show but this should really be set by the app author
     numberOfPhotosInApp,                                                        // Number of photos in app.
     numberOfTimesAFactMustBeHeardBeforeItCanBeUsedAsAQuestion = 1,              // Number of times a fact must be heard before it can be used as a question
     numberOfTimesAQuestionMustBeAnsweredCorrectlyToSeeNewFact = 2,              // How often the student must get a question right first time to see more information
@@ -882,9 +882,7 @@ public class AppState                                                           
 //       {if (photo == cPhoto || !photo.levelOk()) continue;                    // Obviously not the answer or photos that are not yet in play
          {if (photo == cPhoto) continue;                                        // Obviously not the answer
           final int pp = Maths.isqrt(photo.photoFact.presented);                // How often the proposed packing photo has been presented
-          if (pp > 0 && pp >= cqp)                                              // Choose packing photos that the user has encountered before
-           {if (cFact==null || !photo.facts.contains(cFact))choices.push(photo);// Avoid packing photos that share a fact in common with the question
-           }
+          choices.push(photo);
          }
        }
 
@@ -896,6 +894,7 @@ public class AppState                                                           
         for(Photo photo : photos) choices.push(photo);
         AppState.this.numberOfImagesToShow = choices.size();
        }
+//    say("Race= "+raceMode, " level= "+level, " images= "+minimumNumberOfImagesToShow);
      } // Question constructor
 
     public final String questionSound                                            //M The sound that asks the question of the student
@@ -1251,7 +1250,7 @@ public class AppState                                                           
         wrongTitle;                                                             // Title to show when for wrong image during wrong/right response
       final int backGroundColour;                                               // Color to display in back ground of response
       final public Photo chosenPhoto;                                           // The chosen photo
-//    final byte[]interPhraseGap = Speech.silence(1);                           // The amount of space between spoken phrases in double floating point seconds
+      final String interPhraseGap = Speech.silence(1);                          // The amount of space between spoken phrases in double floating point seconds
 
       public Response                                                           //c Create the response to the user's choice
        (Photo chosenPhoto)                                                      //P The user responded by choosing this photo
@@ -1273,27 +1272,15 @@ public class AppState                                                           
             decNumberOfImagesToShow();                                          // Lower number of photos to show
             mark = Mark.giveUp;                                                 // Give up
 
-            wrongTitle = chosenPhoto.similarFactOrTitle(currentQuestion.fact);  // Set response for wrong part of wrong/right
-          //wrongSounds.push
-          // (wrongTitle.createMediaDataSource(speaker2, speechEmphasis));      // Set response for wrong part of wrong/right
+            wrongTitle = chosenPhoto.photoFact.fact;                            // Set title for wrong part of wrong/right - we do not say anything to avoid confusion
 
-            wrongSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());// Say the title
-
-            if (wrongTitle != null && wrongTitle != chosenPhoto)                // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
-             {//wrongSounds.push(interPhraseGap);
-              wrongSounds.push(wrongTitle.createMediaDataSource());
-             }
-
-            rightTitle = currentQuestion.isFact() ?                             // Wrong/right response - correct answer
-              currentQuestion.fact : currentQuestion.photo;
-            //rightSounds.push(questionSound(true));                            // Play the question against the right answer so the user selects the right answer for the sound from only one choice. The sound is said emphasized. The right answer is displayed on the right or bottom.
-
-            rightSounds.push(currentQuestion.photo.photoFact.fact.createMediaDataSource());    // Say the title
-
-            if (rightTitle != null && rightTitle != currentQuestion.photo)      // Say a fact that the student might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
-             {//rightSounds.push(interPhraseGap);
-              rightSounds.push(rightTitle.createMediaDataSource());
-             }
+            rightTitle = currentQuestion.showAndTell();                         // Title for right side
+            rightSounds.push(currentQuestion.fact.createMediaDataSource());     // Play the question against the right answer so the user selects the right answer for the sound from only one choice. The sound is said emphasized. The right answer is displayed on the right or bottom.
+            rightSounds.push(interPhraseGap);
+            rightSounds.push                                                    // Say the title of the photo as well
+             (currentQuestion.photo.photoFact.fact.createMediaDataSource());
+            rightSounds.push(interPhraseGap);
+            rightSounds.push(currentQuestion.fact.createMediaDataSource());     // Replay the question
 
             bgc = ColoursTransformed.darkRed;                                   // Dark Red background means wrong
            }
@@ -1302,16 +1289,10 @@ public class AppState                                                           
             wrongTitle = null;
 
             rightTitle = chosenPhoto.similarFactOrTitle(currentQuestion.fact);  // Show correct title or related fact from the wrongly chosen photo
-          //rightSounds.push
-          // (rightTitle.createMediaDataSource(speaker2, speechEmphasis));      // Say correct title or related fact from the wrongly chosen photo
+            rightSounds.push(rightTitle.createMediaDataSource());               // Say correct title or related fact from the wrongly chosen photo
 
-          //rightSounds.push(interPhraseGap);
-            rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());              // Say the title
-
-            if (rightTitle != null && rightTitle != chosenPhoto)                // Say a fact that the stuent might have confused with the desired fact to pretend to some intelligence like Bamber Gascoigne
-             {//rightSounds.push(interPhraseGap);
-              rightSounds.push(rightTitle.createMediaDataSource());
-             }
+            rightSounds.push(interPhraseGap);
+            rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());// Say the title
 
             bgc = ColoursTransformed.grey;                                      // Grey means going wrong
            }
@@ -1322,22 +1303,20 @@ public class AppState                                                           
            }
           mark = Mark.rightAfterWrong;                                          // Right after being wrong
 
-//        rightSounds.push(questionSound(false));                               // Play the question against the right answer so the user selects the right answer for the sound from only one choice
+          rightSounds.push(questionSound(false));                               // Play the question against the right answer so the user selects the right answer for the sound from only one choice
 
-//        rightSounds.push(interPhraseGap);
-//          rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());                // Say the title of the chosen photo
+          rightSounds.push(interPhraseGap);
+          rightSounds.push(currentQuestion.fact.createMediaDataSource());       // Say the fact again if there is a fact
 
-          if (currentQuestion.fact != null)                                     // Say the fact again if there is a fact
-           {//rightSounds.push(interPhraseGap);
-            rightSounds.push(currentQuestion.photo.photoFact.fact.createMediaDataSource());
-           }
+          rightSounds.push(interPhraseGap);
+          rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource()); // Say the title of the chosen photo
 
           bgc = ColoursTransformed.darkMagenta;                                 // Dark Magenta means right after wrong
           wrongTitle = null;                                                    // No wrong title as we are not in wrong/right mode
-          rightTitle = currentQuestion.fact == null ? chosenPhoto :             // Show a correct related fact or the title of the chosen photo
-            chosenPhoto.similarFactOrTitle(currentQuestion.fact);
+          rightTitle = currentQuestion.fact;                                    // Show a correct related fact or the title of the chosen photo
           if      (choices.size()         < 2) incNumberOfImagesToShow();       // Possibly increase the number of photos to show if there was only one choice
           else if (numberOfWrongResponses > 1) decNumberOfImagesToShow();       // Decrease the number of photos to show if more than one wrong responses
+
          }
         else                                                                    // Right first time in the face of choices
          {final PhotoFact nextFactToPresent =                                   // Choose the next fact to present
@@ -1345,7 +1324,7 @@ public class AppState                                                           
 
           wrongInARowOverAll = 0;                                               // Reset wrong in a row
           giveUpInARow = 0;                                                     // Count the number of give ups in a row
-          rightInARowOverAll++; wrongInARowOverAll = 0;                         // Right in a row
+          rightInARowOverAll++;                                                 // Right in a row
           incNumberOfImagesToShow();                                            // Increase the number of photos to show
 
           if (!autoPlayerMode)                                                  // Only update recorded statistics if the student is the player
@@ -1358,21 +1337,24 @@ public class AppState                                                           
           swingLimits.decSwingLimit();                                          // Broaden the focus
           mark = Mark.rightFirstTime;                                           // Right first time!
 
-          rightSounds.push(chooseMidiRight());                                  // Reward midi
-
+          final ShowAndTell s;
           if (nextFactToPresent != null)                                        // Present new photoFact if possible
-           {final ShowAndTell s = nextFactToPresent.showAndTell();
-            rightSounds.push(s.createMediaDataSource());
-            rightTitle = s;
+           {s = nextFactToPresent.showAndTell();
            }
           else if (currentQuestion.fact != null)                                // Otherwise say the fact again if there was a fact
-           {rightSounds.push(currentQuestion.fact.createMediaDataSource());
-            rightTitle = currentQuestion.fact;
+           {s = currentQuestion.fact;
            }
           else                                                                  // No facts available so say the title again
-           {rightSounds.push(chosenPhoto.photoFact.fact.createMediaDataSource());              // Say the title of the chosen photo
-            rightTitle = currentQuestion.showAndTell();                         // Show current question title if no new fact to present
+           {s = chosenPhoto.photoFact.fact;                                     // Say the title of the chosen photo
            }
+
+          rightSounds.push(interPhraseGap);
+          rightSounds.push(s.createMediaDataSource());                          // Restate fact
+          rightSounds.push(interPhraseGap);
+          rightSounds.push(chooseMidiRight());                                  // Reward midi
+          rightSounds.push(interPhraseGap);
+          rightSounds.push(s.createMediaDataSource());
+          rightTitle = s;
 
           bgc = ColoursTransformed.darkBronzeCoin;                              // Dark Bronze Coin means right first time
           wrongTitle = null;
@@ -1549,5 +1531,5 @@ public class AppState                                                           
    {
    }
 
-  static void say(Object...O) {Say.say(O);}
+  static void say(Object...O) {Log.say(O);}
  } // AppState
