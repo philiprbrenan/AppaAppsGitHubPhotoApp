@@ -20,20 +20,20 @@ file into your forked copy.
 ### Adding Photos
 
 Add some photos of the items you wish to discuss with your students to the
-forked repo.  The photos file names should end in either .jpg or .png. You can
-place these files anywhere in the repository, under any folder name.  I tend to
-use the images/ folder but this is not required. Feel free to remove any
-existing photos you do not want.
+forked repo.  The names of the files should end in either .jpg or .png. You can
+place these photo files anywhere in the repository, under any folder name.  I
+tend to use the images/ folder but this is not required. Feel free to remove
+any existing photos you do not want.
 
 ### Adding Facts
 
-The factual information about each photo is held in the only .txt file in the
-repository.  At the moment there is one such file images/seasons.txt which you
-could either reuse or delete and start again.
+The factual information about each photo is held in the .txt file with the
+shortest name in the repository.  At the moment there is one such file
+images/seasons.txt which you could either reuse or delete and start over again.
 
 The structure of this file is photo name followed by the title of the photo
 followed by facts about the photo one fact or title per line.  Blank lines are
-allowed.  Comments, which I will ignore, begin with # and extend to the end of
+allowed.  Comments, which are ignored, begin with # and extend to the end of
 the line.  Here is a sample file layout:
 
 ~~~~
@@ -53,8 +53,10 @@ the line.  Here is a sample file layout:
 
 ### Synthesizing Speech
 
-I need a userid and secret from: [AWS Polly](https://docs.aws.amazon.com/polly/latest/dg/security-iam.html#security_iam_authentication)
-to synthesize the speech used by the app.
+A userid and secret from:
+[AWS Polly](https://docs.aws.amazon.com/polly/latest/dg/security-iam.html#security_iam_authentication)
+is needed to give permission to use [AWS Polly](https://aws.amazon.com/polly/)
+to synthesize the speech used by the generated app.
 
 The access key and secret access key you obtained from AWS should be installed
 as two secrets in the settings for your forked copy of this repository as in:
@@ -69,16 +71,17 @@ using: [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/referen
 
 ### Notification
 
-GitHub will send you an email when the app is ready or if I cannot understand
-what needs to be done to create your app.
+GitHub will send you an email when the app is ready or if any errors are
+detected while generating the app.
 
 ## Problems
 
-Create an issue against this repository if you need help.
+Please create an issue against this repository if you need help.
 
 ## Acknowledgments
 
-The following Perl modules are used to create educational android apps for you:
+The following Perl modules are being used to create educational android apps
+for you:
 
   [Android::Build](https://metacpan.org/pod/Android::Build)
 
