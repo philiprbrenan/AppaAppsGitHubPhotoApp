@@ -8,7 +8,7 @@ use strict;
 use Carp;
 use Data::Dump qw(dump);
 use Data::Table::Text qw(:all !mmm);
-use GitHub::Crud qw(createIssueInCurrentRepo);
+use GitHub::Crud qw(createIssueInCurrentRepo writeBinaryFileFromFileInCurrentRun);
 use Android::Build;
 use feature qw(say current_sub);
 
@@ -134,12 +134,13 @@ sub eee(@)                                                                      
   confess $e;
  }
 
-sub successMessage                                                              # Write a success message
- {my $t = join " ", "Success:", "creation of app:", githubRepo, "succeeded";
+sub successMessage($)                                                           # Write a success message
+ {my ($apkFile) = @_;                                                           # The apk file in the repo
+  my $t = join " ", "Success:", "creation of app:", githubRepo, "succeeded";
 
   my $g = $ENV{GITHUB_REPOSITORY};
   my $r = $ENV{GITHUB_RUN_ID};
-  my $s = join "\n","See: https://github.com/$g/actions/runs/$r - click on the word <b>apk</b> to download the app to your phone.";
+  my $s = join "\n","See: https://raw.githubusercontent.com/$g/main/$apkFile.";
   my $m = join "\n", @messages;
   my $b = join "\n", $s, $m;
   createIssueInCurrentRepo($t, $b);
@@ -482,10 +483,13 @@ sub compileApp                                                                  
 
   if (-e $apk)                                                                  # Apk file produced by build
    {lll "Success";
+    my $target = fpe($a->title, q(apk));                                        # Target file on GitHub
+    writeBinaryFileFromFileInCurrentRun($target, $apk);                         # Upload apk if on GitHub
+    successMessage($target);                                                    # Create an issue showing success
    }
-  else
+  else                                                                          # Confess to the failure
    {my $b = $a->buildFolder;
-    confess join '', "Unable to create apk file $apk in build folder:\n$b\n",
+    eee join '', "Unable to create apk file $apk in build folder:\n$b\n",
       @{$a->log}, "\n";
    }
  } # compileApp
@@ -560,7 +564,6 @@ sub buildApp                                                                    
   copySpeechForCongratulations;
   removeBadFilesFromAssets;
   compileApp;
-  successMessage;
  }
 
 buildApp;
