@@ -2,8 +2,8 @@
 
 ![Test](https://github.com/philiprbrenan/AppaAppsGitHubPhotoApp/workflows/Test/badge.svg)
 
-Create an immersive Educational Android Photo App by forking this repository
-and changing the images and facts.
+Create an [immersive Educational Android Photo App](https://github.com/philiprbrenan/AppaAppsGitHubPhotoApp/raw/main/AppaAppsGitHubPhotoApp.apk)
+by forking this repository and changing the photos and facts.
 
 Every time you change the forked copy of this repository the app will rebuild
 itself.
