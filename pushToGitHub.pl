@@ -30,7 +30,7 @@ if (1)                                                                          
     searchDirectoryTreesForMatchingFiles($dir,
       qw(.java .jpg .md .mid .mp3 .pl .pm .png .txt));
 
-  my %files = map {$_=>1} #grep {m(genApp.pm|readme|audio)i}                     # Filter files
+  my %files = map {$_=>1} grep {m(genApp.pm|readme)i}                           # Filter files
     @files;
 
   for my $f(sort keys %files)                                                   # Upload each selected file
@@ -109,26 +109,15 @@ jobs:
         export AWSPolly_ACCESS_KEY_ID=${{ secrets.AWSPolly_ACCESS_KEY_ID }}
         export AWSPolly_SECRET_ACCESS_KEY=${{ secrets.AWSPolly_SECRET_ACCESS_KEY }}
         perl genApp.pm
+END
 
-    - name: Tree1
-      run: |
-        tree -L 1
+  lll "Work flow to $repo ", writeFileUsingSavedToken($user, $repo, $wf, $y);
+ }
 
-    - name: Tree2
-      run: |
-        tree -L 2
-
-    - name: Tree3
-      run: |
-        tree -L 3
-
+__DATA__
     - name: Artifact
       uses: actions/upload-artifact\@v2
       with:
         name: apk
         path: build/bin/*.apk
-END
-
-  lll "Work flow to $repo ", writeFileUsingSavedToken($user, $repo, $wf, $y);
- }
 
