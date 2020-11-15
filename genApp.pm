@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/AndroidBuild/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
+#!/usr/bin/perl -Ilib/ -I/home/phil/perl/cpan/AndroidBuild/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
 #-------------------------------------------------------------------------------
 # Generate an an Appa Apps Educational Android App on GitHub
 # Philip R Brenan at gmail dot com, Appa Apps Ltd Inc., 2020
