@@ -1,8 +1,8 @@
-# Create Educational Android Apps by AppaApps
+# Create Immersive Educational Android Apps with AppaApps
 
 ![Test](https://github.com/philiprbrenan/AppaAppsGitHubPhotoApp/workflows/Test/badge.svg)
 
-Create an AppaApps Educational Android Photo App by forking this repository
+Create an immersive Educational Android Photo App by forking this repository
 and changing the images and facts.
 
 Every time you change the forked copy of this repository the app will rebuild
