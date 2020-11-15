@@ -390,7 +390,10 @@ sub write($$;$)                                                                 
    }
 
   my $url  = url;
+  my $save = $gitHub->gitFile;                                                  # Save any existing file name as we might need to update it to get the sha if the target file was supplied as a parameter to this sub
+  $gitHub->gitFile = $File if $File;                                            # Set target file name so we can get its sha
   my $s    = $gitHub->getExistingSha || getSha($data);                          # Get the L<sha> of the file if the file exists
+  $gitHub->gitFile = $save;                                                     # Restore file name
   my $sha = $s ? ', "sha": "'. $s .'"' : '';                                    # L<sha> of existing file or blank string if no existing file
 
 # if ($s and my $S = getSha($data))                                             # L<sha> of new data
@@ -862,7 +865,8 @@ sub writeFileFromFileUsingSavedToken($$$$;$)                                    
 sub writeBinaryFileFromFileInCurrentRun($$)                                     # Upload a binary file from the current run into the repo.
  {my ($target, $source) = @_;                                                   # The target file name in the repo, the current file name in the run
   if (my $g = currentRepo)                                                      # We are on GitHub
-   {$g->write(readBinaryFile($source), $target);
+   {$g->gitFile = $target;
+    $g->write(readBinaryFile($source));
    }
  }
 
