@@ -16,34 +16,34 @@ phone.
 Fork this repository by clicking on the **Fork** button in the top right
 corner.
 
-Place some photos in the forked repository and describe them with some facts
-saved in a **.txt** file saved in your forked repository. The app will be
-generated each time you save a new copy of this file. GitHub will send you an
-issue by email to tell you the results of each change that you make. Or you can
-click on the **Actions** tab of your repository and watch GitHub actions create
-your app for you.
+Place some photos in your forked copy of this repository and describe them with
+some facts saved in a **.txt** file saved in your forked repository. The app
+will be generated each time you save a new copy of this file. GitHub will send
+you an issue by email to tell you the results of each change that you make. Or
+you can click on the **Actions** tab of your repository and watch GitHub
+actions create your app for you.
 
 
 ### Adding Photos
 
 Add some photos of the items you wish to discuss with your students to your
-forked repo.  The names of the files should end in either .jpg or .png. You can
-place these photo files anywhere in the repository, under any folder name.  I
-tend to use the __images/__ folder but this is not required. Feel free to
-remove any existing photos you do not want.
+forked copy of this repository.  The names of the files should end in either
+.jpg or .png. You can place these photo files anywhere in your repository, under
+any folder name.  I tend to use the __images/__ folder but this is not
+required. Feel free to delete any existing photos you do not want.
 
 ### Adding Facts
 
-The facts about each photo is held in the **.txt** file with the shortest name
-in the repository.  At the moment there is one such file __images/seasons.txt__
-which you could either reuse or delete and start over again with a different
-name.
+The facts about each photo are held in the **.txt** file with the shortest name
+in the repository.  At the moment there is only one such file
+__images/seasons.txt__ which you could either reuse or delete and start over
+again with a different name.
 
 The structure of the **.txt** file is: photo name followed by the title of the
 photo followed by facts about the photo one fact or title per line.  Blank
-lines are allowed.  Comments, which are ignored, begin with # and extend to the
-end of the line.  Here is a sample **.txt**file layout with some explanatory
-comments:
+lines are allowed.  Comments, which are ignored, begin with **#** and extend to
+the end of the line.  Here is a sample **.txt**file layout with some
+explanatory comments:
 
 ~~~~
   images/Summer1.jpg    # A photo file in this repository illustrating "Summer"
@@ -64,8 +64,8 @@ comments:
 
 A userid and secret from:
 [AWS Polly](https://docs.aws.amazon.com/polly/latest/dg/security-iam.html#security_iam_authentication)
-is needed to give permission to use [AWS Polly](https://aws.amazon.com/polly/)
-to synthesize the speech used by the generated app.
+is needed to enable [AWS Polly](https://aws.amazon.com/polly/) to synthesize
+the speech for your app.
 
 The access key and secret access key you obtained from AWS should be installed
 as two secrets in the settings for your forked copy of this repository as:
@@ -73,7 +73,7 @@ as two secrets in the settings for your forked copy of this repository as:
 ~~~~
   Key_______________________   Value____________________________________
   AWSPolly_ACCESS_KEY_ID       20 characters in upper case A-Z 0-9
-  AWSPolly_SECRET_ACCESS_KEY   40 characters in mixed case a-z A-z 0-9 /
+  AWSPolly_SECRET_ACCESS_KEY   40 characters in mixed case a-z A-Z 0-9 /
 ~~~~
 
 as described in:
@@ -108,7 +108,7 @@ email in fluent Klingon, __not English__, explaining why.
 
 Please create an issue against this repository if you need help. I will be
 pleased to help you because I take pride in my work: I want my work to work
-well for you too.
+as well for you as it does for me.
 
 ## Acknowledgments
 
