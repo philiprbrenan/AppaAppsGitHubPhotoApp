@@ -1,4 +1,4 @@
-# Create Immersive Educational Android Apps with AppaApps
+## Create Immersive Educational Android Apps with AppaApps
 
 ![Test](https://github.com/philiprbrenan/AppaAppsGitHubPhotoApp/workflows/Test/badge.svg)
 
