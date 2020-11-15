@@ -13,14 +13,20 @@ phone.
 
 ## Detailed Instructions
 
-Place some photos in the forked repository and modify the .txt file to describe
-these photos.  The app will be generated each time you save a new copy of a
-file into your forked copy. GitHub will send you an issue by email to tell you
-the results of each change that you make.
+Fork this repository by clicking on the **Fork** button in the top right
+corner.
+
+Place some photos in the forked repository and describe them with some facts
+saved in a **.txt** file saved in your forked repository. The app will be
+generated each time you save a new copy of this file. GitHub will send you an
+issue by email to tell you the results of each change that you make. Or you can
+click on the **Actions** tab of your repository and watch GitHub actions create
+your app for you.
+
 
 ### Adding Photos
 
-Add some photos of the items you wish to discuss with your students to the
+Add some photos of the items you wish to discuss with your students to your
 forked repo.  The names of the files should end in either .jpg or .png. You can
 place these photo files anywhere in the repository, under any folder name.  I
 tend to use the __images/__ folder but this is not required. Feel free to remove
@@ -28,9 +34,9 @@ any existing photos you do not want.
 
 ### Adding Facts
 
-The factual information about each photo is held in the .txt file with the
-shortest name in the repository.  At the moment there is one such file
-images/seasons.txt which you could either reuse or delete and start over again.
+The facts about each photo is held in the .txt file with the shortest name in
+the repository.  At the moment there is one such file images/seasons.txt which
+you could either reuse or delete and start over again with a different name.
 
 The structure of this file is photo name followed by the title of the photo
 followed by facts about the photo one fact or title per line.  Blank lines are
@@ -38,18 +44,18 @@ allowed.  Comments, which are ignored, begin with # and extend to the end of
 the line.  Here is a sample file layout with some explanatory comments:
 
 ~~~~
-  images/Summer1.jpg    # The photo name in repo
-  images/Summer2.jpg    # Optionally more photos of the same thing
+  images/Summer1.jpg    # A photo file in this repository illustrating "Summer"
+  images/Summer2.jpg    # Optionally: more photos of "Summer"
 
   Summer                # The title of the preceding photos
-  Warm and sunny        # A fact about summer illustrated by the preceding photos
-  Not often cold        # Another fact about summer - ditto
+  Warm and sunny        # A fact about Summer illustrated by the preceding photos
+  Not often cold        # Another fact about Summer - ditto
 
 
-  Winter.png            # Photo name in repo
+  Winter.png            # Another photo file name
 
   Winter                # The title of the preceding photo
-  Cold and dark         # A fact about winter illustrated by the preceding photo
+  Cold and dark         # A fact illustrated by the preceding photo
 ~~~~
 
 ### Synthesizing Speech
@@ -71,9 +77,12 @@ as two secrets in the settings for your forked copy of this repository as:
 as described in:
 [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 
+Please raise an issue against this repository if you have any difficulty with
+this step and I will be pleased to help you.
+
 ### Notification
 
-GitHub will send you an email when the app is ready or if any errors were
+GitHub will send you an email when your app is ready or if any errors were
 detected while generating your app.  Correct the errors and the app will
 rebuild itself. Iterate until you are happy with the results.
 
@@ -83,17 +92,19 @@ Look at the photos displayed on the screen, listen to the spoken fact and then
 **tap** on the photo that corresponds to the spoken fact. **Tap**ing is much
 faster and easier than swiping.
 
-The app teaches by tending to ask the student the questions whose answers they
-know least well while reteaching them better known material, complementing them
-on their progress, playing them music as rewards for correct answers and
-remonstrating with them when they get things wrong, all with the infinite
-patience and precision of a machine so that the material become known by rote.
+The app teaches by asking the student the questions whose answers they know
+least well while reteaching them better known material, complementing them on
+their progress, playing them music as rewards for correct answers and
+remonstrating with them when they get things wrong - all with the infinite
+patience and precision of a machine so that the material becomes known by rote.
+
 And if you think that knowing things by rote is not important please send me an
-email in Klingon, not English, explaining why.
+email in fluent Klingon, not English, explaining why.
 
 ## Problems
 
-Please create an issue against this repository if you need help.
+Please create an issue against this repository if you need help. I will be
+pleased to help you because I take pride in my work.
 
 ## Acknowledgments
 
