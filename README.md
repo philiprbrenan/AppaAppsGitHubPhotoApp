@@ -29,19 +29,21 @@ your app for you.
 Add some photos of the items you wish to discuss with your students to your
 forked repo.  The names of the files should end in either .jpg or .png. You can
 place these photo files anywhere in the repository, under any folder name.  I
-tend to use the __images/__ folder but this is not required. Feel free to remove
-any existing photos you do not want.
+tend to use the __images/__ folder but this is not required. Feel free to
+remove any existing photos you do not want.
 
 ### Adding Facts
 
-The facts about each photo is held in the .txt file with the shortest name in
-the repository.  At the moment there is one such file images/seasons.txt which
-you could either reuse or delete and start over again with a different name.
+The facts about each photo is held in the **.txt** file with the shortest name
+in the repository.  At the moment there is one such file __images/seasons.txt__
+which you could either reuse or delete and start over again with a different
+name.
 
-The structure of this file is photo name followed by the title of the photo
-followed by facts about the photo one fact or title per line.  Blank lines are
-allowed.  Comments, which are ignored, begin with # and extend to the end of
-the line.  Here is a sample file layout with some explanatory comments:
+The structure of the **.txt** file is: photo name followed by the title of the
+photo followed by facts about the photo one fact or title per line.  Blank
+lines are allowed.  Comments, which are ignored, begin with # and extend to the
+end of the line.  Here is a sample **.txt**file layout with some explanatory
+comments:
 
 ~~~~
   images/Summer1.jpg    # A photo file in this repository illustrating "Summer"
@@ -90,7 +92,8 @@ rebuild itself. Iterate until you are happy with the results.
 
 Look at the photos displayed on the screen, listen to the spoken fact and then
 **tap** on the photo that corresponds to the spoken fact. **Tap**ing is much
-faster and easier than swiping.
+faster and easier than swiping which is why we use **taps** rather than
+**swipes** to control the app.
 
 The app teaches by asking the student the questions whose answers they know
 least well while reteaching them better known material, complementing them on
@@ -99,7 +102,7 @@ remonstrating with them when they get things wrong - all with the infinite
 patience and precision of a machine so that the material becomes known by rote.
 
 And if you think that knowing things by rote is not important please send me an
-email in fluent Klingon, not English, explaining why.
+email in fluent Klingon, __not English__, explaining why.
 
 ## Problems
 
