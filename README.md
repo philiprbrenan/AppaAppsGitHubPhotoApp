@@ -11,13 +11,13 @@ itself.
 GitHub will send you a message when the app is ready to be downloaded to your
 phone.
 
-# Detailed Instructions
+## Detailed Instructions
 
 Place some photos in the forked repository and modify the .txt file to describe
 these photos.  The app will be generated each time you save a new copy of a
 file into your forked copy.
 
-## Adding Photos
+### Adding Photos
 
 Add some photos of the items you wish to discuss with your students to the
 forked repo.  The photos file names should end in either .jpg or .png. You can
@@ -25,7 +25,7 @@ place these files anywhere in the repository, under any folder name.  I tend to
 use the images/ folder but this is not required. Feel free to remove any
 existing photos you do not want.
 
-## Adding Facts
+### Adding Facts
 
 The factual information about each photo is held in the only .txt file in the
 repository.  At the moment there is one such file images/seasons.txt which you
@@ -51,7 +51,7 @@ the line.  Here is a sample file layout:
   Cold and dark         # A fact about winter illustrated by the preceding photo
 ~~~~
 
-## Synthesizing Speech
+### Synthesizing Speech
 
 I need a userid and secret from: [AWS Polly](https://docs.aws.amazon.com/polly/latest/dg/security-iam.html#security_iam_authentication)
 to synthesize the speech used by the app.
@@ -67,16 +67,16 @@ as two secrets in the settings for your forked copy of this repository as in:
 
 using: [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 
-## Notification
+### Notification
 
 GitHub will send you an email when the app is ready or if I cannot understand
 what needs to be done to create your app.
 
-# Problems
+## Problems
 
 Create an issue against this repository if you need help.
 
-# Acknowledgments
+## Acknowledgments
 
 The following Perl modules are used to create educational android apps for you:
 
