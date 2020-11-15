@@ -93,9 +93,9 @@ rebuild itself. Iterate until you are happy with the results.
 ## Playing your educational app
 
 Look at the photos displayed on the screen, listen to the spoken fact and then
-**tap** on the photo that corresponds to the spoken fact. **Tap**ing is much
+**tap** on the photo that corresponds to the spoken fact. **Tap**ping is much
 faster and easier than swiping which is why we use **taps** rather than
-**swipes** to control the app.
+**swipes** to control these apps.
 
 The app teaches by asking the student the questions whose answers they know
 least well while reteaching them better known material, complementing them on
