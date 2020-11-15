@@ -107,7 +107,8 @@ email in fluent Klingon, __not English__, explaining why.
 ## Problems
 
 Please create an issue against this repository if you need help. I will be
-pleased to help you because I take pride in my work.
+pleased to help you because I take pride in my work: I want my work to work
+well for you too.
 
 ## Acknowledgments
 
