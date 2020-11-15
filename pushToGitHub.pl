@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I/home/phil/perl/cpan/DataTableText/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
+#!/usr/bin/perl -Ilib/ -I/home/phil/perl/cpan/DataTableText/lib/ -I/home/phil/perl/cpan/GitHubCrud/lib/
 #-------------------------------------------------------------------------------
 # Push Photo App to GitHub/AppaAppsGitHubPhotoApp
 # Philip R Brenan at gmail dot com, Appa Apps Ltd Inc., 2020
@@ -8,11 +8,12 @@ use strict;
 use Carp;
 use Data::Dump qw(dump);
 use Data::Table::Text qw(:all);
-use GitHub::Crud qw(deleteFileUsingSavedToken writeCommitUsingSavedToken writeFileUsingSavedToken);
+use GitHub::Crud qw(:all);
 use YAML::Loader;
 use feature qw(say current_sub);
 
 my $home     = q(/home/phil/);                                                  # Local files
+my $cpan     = q(/home/phil/perl/cpan);                                         # Cpan files
 my $user     = q(philiprbrenan);                                                # User
 my $repo     = q(AppaAppsGitHubPhotoApp);                                       # Repo
 my $lf       = fpf($home, $repo);                                               # The local folder
@@ -22,25 +23,38 @@ my $dir      = fpd($home, $repo);                                               
 
 # Files
 
-if (1)                                                                          # Upload C files
+if (1)                                                                          # Upload files
  {deleteFileUsingSavedToken($user, $repo, $wf);                                 # Delete this file to prevent each upload triggering an action - it will be added at the end.
 
   my @files = grep {!m(/(backup|build|z)/)}                                     # Select files ignoring backups, builds and tests
     searchDirectoryTreesForMatchingFiles($dir,
-      qw(.java .jpg .md .mp3 .pl .pm .png .txt));
+      qw(.java .jpg .md .mid .mp3 .pl .pm .png .txt));
 
-  my %files = map {$_=>1} #grep {m(genApp.pm|Activity|Appstate)i}                # Filter files
+  my %files = map {$_=>1} #grep {m(genApp.pm|readme|audio)i}                     # Filter files
     @files;
 
   for my $f(sort keys %files)                                                   # Upload each selected file
    {my $t = swapFilePrefix($f, $dir);
-    my $s = $f =~ m((jpg|mp3|png)\Z) ? readBinaryFile($f) : readFile($f);
+    my $s = $f =~ m((jpg|mid|mp3|png)\Z)i ? readBinaryFile($f) : readFile($f);
     lll "$f to $t ", writeFileUsingSavedToken($user, $repo, $t, $s);
    }
  }
 
+if (0)                                                                          # CPAN modules to lib
+ {my @files = qw(
+/home/phil/perl/cpan/AndroidBuild/lib/Android/Build.pm
+/home/phil/perl/cpan/DataTableText/lib/Data/Table/Text.pm
+/home/phil/perl/cpan/GitHubCrud/lib/GitHub/Crud.pm
+);
+
+  for my $s(@files)                                                             # Upload each selected file
+   {my $t = $s =~ s(\A.*/(lib/)) ($1)r;
+    lll "$s to $t ", writeFileFromFileUsingSavedToken($user, $repo, $t, $s);
+   }
+ }
+
 if (1)                                                                          # Create app
- {my $y = <<END;                                                                # Workflow for C
+ {my $y = <<'END';                                                              # Workflow for C
 name: Test
 
 on:
@@ -52,11 +66,6 @@ jobs:
 
     steps:
     - uses: actions/checkout\@v2
-
-    - name: Env
-      run: |
-        echo \$HOME
-        pwd
 
     - name: Install Sdk
       run: |
@@ -92,21 +101,29 @@ jobs:
 
     - name: Tree
       run: |
-        tree
-
-    - name: pwd
-      run: |
-        pwd
+        tree -L 2
 
     - name: GenApp
       run: |
+        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        export AWSPolly_ACCESS_KEY_ID=${{ secrets.AWSPolly_ACCESS_KEY_ID }}
+        export AWSPolly_SECRET_ACCESS_KEY=${{ secrets.AWSPolly_SECRET_ACCESS_KEY }}
         perl genApp.pm
+
+    - name: Tree1
+      run: |
+        tree -L 1
 
     - name: Tree2
       run: |
-        tree
+        tree -L 2
 
-    - uses: actions/upload-artifact\@v2
+    - name: Tree3
+      run: |
+        tree -L 3
+
+    - name: Artifact
+      uses: actions/upload-artifact\@v2
       with:
         name: apk
         path: build/bin/*.apk
