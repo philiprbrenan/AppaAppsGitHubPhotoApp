@@ -17,11 +17,11 @@ Fork this repository by clicking on the **Fork** button in the top right
 corner.
 
 Place some photos in your forked copy of this repository and describe them with
-some facts saved in a **.txt** file saved in your forked repository. The app
-will be generated each time you save a new copy of this file. GitHub will send
-you an issue by email to tell you the results of each change that you make. Or
-you can click on the **Actions** tab of your repository and watch GitHub
-actions create your app for you.
+some facts saved in a **.txt** file saved in your repository. The app will be
+generated each time you save a new copy of this file. GitHub will send you an
+issue by email to tell you the results of each change that you make. Or you can
+click on the **Actions** tab of your repository and watch GitHub actions create
+your app for you.
 
 
 ### Adding Photos
@@ -80,7 +80,9 @@ as described in:
 [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
 
 Please raise an issue against this repository if you have any difficulty with
-this step and I will be pleased to help you.
+this step and I will be pleased to help you.  Or add me as a
+[collaborator](https://docs.github.com/en/enterprise/2.14/user/articles/inviting-collaborators-to-a-personal-repository)
+and I will be able to fix your repository for you.
 
 ### Notification
 
@@ -106,9 +108,12 @@ email in fluent Klingon, __not English__, explaining why.
 
 ## Problems
 
-Please create an issue against this repository if you need help. I will be
-pleased to help you because I take pride in my work: I want my work to work
-as well for you as it does for me.
+Please create an issue against this repository if you need help or add me as a
+[collaborator](https://docs.github.com/en/enterprise/2.14/user/articles/inviting-collaborators-to-a-personal-repository)
+and I will be able to fix your repository for you.
+
+I will be pleased to help you because I take pride in my work: I want my work
+to work as well for you as it does for me - all day, every day.
 
 ## Acknowledgments
 
