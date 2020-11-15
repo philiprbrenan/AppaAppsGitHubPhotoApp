@@ -136,7 +136,10 @@ sub eee(@)                                                                      
 
 sub successMessage                                                              # Write a success message
  {my $t = join " ", "Success:", "creation of app:", githubRepo, "succeeded";
-  my $s = join "\n","See: ";
+
+  my $g = $ENV{GITHUB_REPOSITORY};
+  my $r = $ENV{GITHUB_RUN_ID};
+  my $s = join "\n","See: https://github.com/$g/actions/runs/$r - click on the word <b>apk</b> to download the app to your phone.";
   my $m = join "\n", @messages;
   my $b = join "\n", $s, $m;
   createIssueInCurrentRepo($t, $b);
