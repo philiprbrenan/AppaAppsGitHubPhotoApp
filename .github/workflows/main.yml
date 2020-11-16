@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout\@v2
+
+    - name: Install Sdk
+      run: |
+       mkdir -p android/sdk
+        (cd  android/sdk; wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip; unzip -q sdk-tools-linux-3859397.zip)
+         echo 'y' | android/sdk/tools/bin/sdkmanager 'platforms;android-25' 'platform-tools' 'build-tools;25.0.3' emulator 'system-images;android-25;google_apis;x86_64'
+
+    - name: Install Java
+      run: |
+       sudo apt update
+       sudo apt install imagemagick zip openjdk-8-jdk tree curl zip
+
+    - name: Create keystore
+      run: |
+       mkdir keys
+       keytool -genkey -v -keystore keys/key.keystore -keyalg RSA -keysize 2048 -validity 10000 -storepass 121212 -alias key -dname 'CN=a, OU=a, O=a, L=a, ST=a, C=a'
+
+    - name: Install Perl Data::Table::Text
+      run: |
+        sudo cpan -T install Data::Table::Text
+
+    - name: Install Perl Android::Build
+      run: |
+        sudo cpan -T install Android::Build
+
+    - name: Install Perl GitHub::Crud
+      run: |
+        sudo cpan -T install GitHub::Crud
+
+    - name: Check Perl
+      run: |
+        perl -v
+
+    - name: Tree
+      run: |
+        tree -L 2
+
+    - name: GenApp
+      run: |
+        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        export AWSPolly_ACCESS_KEY_ID=${{ secrets.AWSPolly_ACCESS_KEY_ID }}
+        export AWSPolly_SECRET_ACCESS_KEY=${{ secrets.AWSPolly_SECRET_ACCESS_KEY }}
+        perl genApp.pm
